@@ -46,13 +46,36 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg)}
 mark{color:#111;padding:1px 0;border-radius:3px;cursor:pointer;background:#fff176}
 mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
 [data-c=yellow]{background:#fff176}[data-c=green]{background:#c8e6c9}[data-c=blue]{background:#bbdefb}[data-c=pink]{background:#f8bbd0}[data-c=orange]{background:#ffe0b2}[data-c=purple]{background:#e1bee7}
-#hlMenu{position:fixed;z-index:1700;display:none;width:210px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:0 12px 36px rgba(0,0,0,.3)}
+#hlMenu{position:fixed;z-index:1700;width:270px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;box-shadow:0 12px 36px rgba(0,0,0,.3)}
 .hm-t{font-size:.75rem;font-weight:700;margin-bottom:6px}
 .hm-c{display:block;width:100%;text-align:left;border:0;border-radius:8px;padding:7px 10px;margin-bottom:5px;font-size:.85rem;font-weight:500;color:#111}
 .hm-a{display:block;width:100%;text-align:left;border:0;background:none;color:inherit;padding:6px;border-radius:6px;font-size:.84rem}.hm-a:hover{background:var(--hover)}
-#tip,#editor{position:fixed;z-index:1600;display:none}
+#tip,#editor{z-index:1600}
 #tip{max-width:300px;background:#212529;color:#fff;padding:8px 12px;border-radius:8px;font-size:.84rem;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.3);white-space:pre-wrap}
 #editor{z-index:1800;width:300px;background:var(--note);border:1px solid var(--note-b);border-radius:10px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+
+/* ----- hiệu ứng mượt ----- */
+.pop{position:fixed;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(var(--dy,-6px)) scale(.96);transform-origin:50% var(--oy,0);transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1),visibility 0s linear .2s}
+.pop.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1),visibility 0s}
+#hlColors{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}
+.hm-c{margin:0;padding:6px 10px;font-size:.82rem;transition:transform .12s ease,box-shadow .12s ease}
+.hm-c:hover{transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.hm-c.cur{box-shadow:0 0 0 2px var(--card),0 0 0 4px #cf1717}
+.hm-g{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.hm-a{font-size:.8rem;padding:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:background-color .12s ease}
+.hm-g hr{grid-column:1/-1;margin:4px 0!important}#actAll{grid-column:1/-1}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fin{from{opacity:0}to{opacity:1}}
+.enter{animation:rise .42s cubic-bezier(.2,.7,.2,1) both}.enter+.enter{animation-delay:.09s}
+.vfade{animation:fin .4s ease both}.alert{animation:fin .25s ease}
+mark{transition:background-color .25s ease,box-shadow .25s ease}
+.art,.nav-item-x{transition:background-color .15s ease,border-color .15s ease,color .15s ease}
+.btn:active{transform:scale(.97)}
+.modal.fade .modal-dialog{transform:translateY(16px) scale(.97);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.modal.show .modal-dialog{transform:none}
+#sideCanvas{--bs-offcanvas-transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.tt,.tt *{transition:background-color .35s ease,color .35s ease,border-color .35s ease!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.bar i{animation-duration:1.1s!important;animation-iteration-count:infinite!important}}
 </style>
 </head>
 <body>
@@ -64,7 +87,7 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
 
 <div id="loader"><div class="brand">Readup Support News</div><div class="bar"><i></i></div></div>
 
-<div id="authView" class="auth-wrap" style="display:none">
+<div id="authView" class="auth-wrap vfade" style="display:none">
   <div class="tools-slot position-fixed top-0 end-0 p-3"></div>
   <div class="card auth-card"><div class="card-body p-4">
     <div class="text-center mb-3"><div class="brand fs-3">Readup Support News</div><div class="text-muted small" data-i18n="tag"></div></div>
@@ -80,7 +103,7 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
   </div></div>
 </div>
 
-<div id="appView" style="display:none">
+<div id="appView" class="vfade" style="display:none">
   <header class="topbar"><div class="container-fluid px-3 px-lg-4 py-2 d-flex align-items-center">
     <button class="btn btn-outline-secondary d-lg-none me-2 px-2 py-1" data-bs-toggle="offcanvas" data-bs-target="#sideCanvas" aria-label="Menu"><i class="bi bi-list fs-5"></i></button><a class="brand fs-5 text-nowrap" href="#"><i class="bi bi-newspaper me-2 d-none d-sm-inline"></i><span class="d-none d-sm-inline">Readup Support News</span><span class="d-sm-none">Readup</span></a>
     <div class="ms-auto d-flex align-items-center gap-2">
@@ -138,17 +161,17 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
   </div>
   <div class="modal-footer border-0"><button id="lkCopy" class="btn btn-sm btn-outline-secondary"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button id="lkInsert" class="btn btn-sm btn-primary"><i class="bi bi-journal-plus me-1"></i><span data-i18n="toNote"></span></button></div>
 </div></div></div>
-<div id="hlMenu">
+<div id="hlMenu" class="pop">
   <div class="hm-t" data-i18n="hlColor"></div><div id="hlColors"></div>
-  <hr class="my-1"><button class="hm-a" id="actLook"><i class="bi bi-translate me-2"></i><span data-i18n="lookup"></span></button>
-  <div id="hlActs"><hr class="my-1">
+  <hr class="my-1"><div class="hm-g"><button class="hm-a" id="actCopy"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button class="hm-a" id="actLook"><i class="bi bi-translate me-1"></i><span data-i18n="lookupGo"></span></button></div>
+  <div id="hlActs" class="hm-g"><hr class="my-1">
     <button class="hm-a" id="actNote"><i class="bi bi-chat-square-text me-2"></i><span data-i18n="note"></span></button>
     <button class="hm-a" id="actRem"><i class="bi bi-eraser me-2"></i><span data-i18n="removeHl"></span></button>
     <button class="hm-a" id="actAll"><i class="bi bi-trash me-2"></i><span data-i18n="clearAll"></span></button>
   </div>
 </div>
-<div id="tip"></div>
-<div id="editor">
+<div id="tip" class="pop"></div>
+<div id="editor" class="pop">
   <div class="small fw-bold mb-1"><i class="bi bi-pencil-square me-1"></i><span data-i18n="noteTitle"></span></div>
   <textarea id="noteTxt" class="form-control form-control-sm" rows="4" data-ph="notePh"></textarea>
   <div class="d-flex gap-2 mt-2"><button class="btn btn-sm btn-primary" id="noteSave" data-i18n="save"></button><button class="btn btn-sm btn-outline-secondary" id="noteClose" data-i18n="close"></button></div>
@@ -173,7 +196,7 @@ noFolders:'Chưa có thư mục.',noArts:'Chưa có bài nào.',today:'Hôm nay'
 confirm:'Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi đăng nhập.',delFolder:'Xóa thư mục? Bài báo vẫn được giữ lại và xếp theo ngày.',folderName:'Tên thư mục mới:',badUrl:'Hãy dán một đường link hợp lệ (bắt đầu bằng http/https).',
 fetchFail:'Không tải được trang này. Hãy kiểm tra lại link hoặc thử bài khác (một số báo chặn đọc tự động / có paywall).',extractFail:'Không trích xuất được nội dung bài báo.',noFolderOpt:'Không thư mục (theo ngày)',source:'Nguồn',
 tip:'Bôi đen chữ cần học → chọn <b>màu highlight</b> → nhập ghi chú. Rê chuột vào chữ đã highlight để xem ghi chú, bấm vào để đổi màu, sửa ghi chú hoặc xóa.',delArt:'Xóa bài báo này? Bài báo cùng highlight và ghi chú sẽ bị xóa vĩnh viễn.',saveFail:'Lưu thất bại: ',pwDone:'Đã đổi mật khẩu.',
-noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Thêm / sửa ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
+noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
 c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)'},
 en:{tag:'Read news, highlight and note new words',login:'Log in',signup:'Sign up',pass:'Password',pass2:'Confirm password',folders:'Folders',all:'By date (unfiled)',arts:'Articles',urlPh:'Paste an article link here…',read:'Read',
 emptyMain:'Paste an article link to start reading, or pick a saved article from your article list.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
@@ -181,7 +204,7 @@ noFolders:'No folders yet.',noArts:'No articles yet.',today:'Today',yest:'Yester
 confirm:'Account created. Check your email to confirm, then log in.',delFolder:'Delete this folder? Its articles are kept and grouped by date.',folderName:'New folder name:',badUrl:'Please paste a valid link (starting with http/https).',
 fetchFail:"Couldn't load this page. Check the link or try another article (some sites block automatic reading or have a paywall).",extractFail:"Couldn't extract the article content.",noFolderOpt:'No folder (by date)',source:'Source',
 tip:'Select the words to learn → pick a <b>highlight color</b> → write a note. Hover a highlight to see its note; click it to change color, edit the note or remove it.',delArt:'Delete this article? It and its highlights and notes will be permanently removed.',saveFail:'Save failed: ',pwDone:'Password updated.',
-noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Add / edit note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
+noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
 c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)'}};
 const t = k => I[lang][k] ?? k;
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
@@ -198,7 +221,7 @@ function applyLang(){
 function applyTheme(){ const d=document.documentElement.dataset.bsTheme==='dark'; document.querySelectorAll('.themeBtn i').forEach(i=>i.className='bi '+(d?'bi-sun':'bi-moon-stars')); }
 document.addEventListener('click',e=>{
   const l=e.target.closest('[data-lang]'); if(l){ lang=l.dataset.lang; try{localStorage.setItem('lang',lang)}catch(_){} applyLang(); }
-  const th=e.target.closest('.themeBtn'); if(th){ const n=document.documentElement.dataset.bsTheme==='dark'?'light':'dark'; document.documentElement.dataset.bsTheme=n; try{localStorage.setItem('theme',n)}catch(_){} applyTheme(); }
+  const th=e.target.closest('.themeBtn'); if(th){ const n=document.documentElement.dataset.bsTheme==='dark'?'light':'dark'; const h=document.documentElement; h.classList.add('tt'); h.dataset.bsTheme=n; setTimeout(()=>h.classList.remove('tt'),450); try{localStorage.setItem('theme',n)}catch(_){} applyTheme(); }
   const b=e.target.closest('.eye'); if(b){ const i=b.parentElement.querySelector('input'), s=i.type==='password'; i.type=s?'text':'password'; b.innerHTML=`<i class="bi bi-eye${s?'-slash':''}"></i>`; }
 });
 const cfEl=()=>document.getElementById('cfModal');
@@ -214,7 +237,7 @@ function closeSide(){ if(innerWidth<992){ const o=bootstrap.Offcanvas.getInstanc
 const loader = on => $('#loader').classList.toggle('hide', !on);
 const alertBox = (el,msg,type='danger') => $(el).innerHTML = msg ? `<div class="alert alert-${type} py-2 small">${msg}</div>` : '';
 const loc = () => lang==='vi'?'vi-VN':'en-GB';
-const showEmpty = () => $('#readerBox').innerHTML=`<div class="reader-card text-center text-muted py-5"><i class="bi bi-book fs-1 text-danger"></i><p class="mt-2 mb-0">${t('emptyMain')}</p></div>`;
+const showEmpty = () => $('#readerBox').innerHTML=`<div class="reader-card vfade text-center text-muted py-5"><i class="bi bi-book fs-1 text-danger"></i><p class="mt-2 mb-0">${t('emptyMain')}</p></div>`;
 
 /* ---------- Đăng nhập / đăng ký ---------- */
 $('#authTabs').addEventListener('click', e => {
@@ -319,12 +342,12 @@ $('#urlIn').addEventListener('keydown',e=>e.key==='Enter'&&$('#fetchBtn').click(
 
 /* ---------- Trình đọc ---------- */
 function fmtD(v){ if(!v) return ''; const d=new Date(v); return isNaN(d)?v:d.toLocaleDateString(loc(),{year:'numeric',month:'long',day:'numeric'}); }
-function infoCard(a){
+function infoCard(a,keep){
   const m=a.meta||{}, fo=folders.find(f=>f.id===a.folder_id);
   const w=m.words?`${Number(m.words).toLocaleString(loc())} ${t('words')} · ~${Math.max(1,Math.round(m.words/220))} ${t('min')}`:'—';
   const row=(k,v)=>`<tr><th class="fw-semibold text-muted" style="width:32%">${t(k)}</th><td>${v}</td></tr>`;
   const inp=(id,v)=>`<input id="${id}" class="form-control form-control-sm" value="${esc(v)}">`;
-  return `<div class="reader-card mt-3"><h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>${t('infoTitle')}</h6>
+  return `<div class="reader-card mt-3${keep?'':' enter'}"><h6 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>${t('infoTitle')}</h6>
   <div class="table-responsive"><table class="table table-sm align-middle mb-3"><tbody>
   ${row('iTitle',inp('iTi',a.title))}${row('iAuthor',inp('iAu',m.author||''))}${row('iDate',inp('iDa',fmtD(m.published)))}${row('iSite',inp('iSi',m.site||''))}
   ${row('iLink',`<a href="${esc(a.url)}" target="_blank" rel="noopener" class="text-break">${esc(a.url)}</a>`)}
@@ -333,7 +356,7 @@ function infoCard(a){
 }
 function openArticle(a,keep){
   cur=a; cur.notes=cur.notes||{}; renderSide();
-  $('#readerBox').innerHTML=`<div class="reader-card"><div style="max-width:72ch;margin:auto">
+  $('#readerBox').innerHTML=`<div class="reader-card${keep?'':' enter'}"><div style="max-width:72ch;margin:auto">
     <h1 class="fw-bold mb-2" style="font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.3">${esc(a.title)}</h1>
     <div class="d-flex flex-wrap align-items-center gap-2 small text-muted mb-3">
       <a href="${esc(a.url)}" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-box-arrow-up-right me-1"></i>${t('source')}</a>
@@ -342,7 +365,7 @@ function openArticle(a,keep){
       <button class="btn btn-sm btn-outline-danger" id="delArt"><i class="bi bi-trash me-1"></i>${t('delBtn')}</button>
     </div>
     <div class="alert bg-body-tertiary border small py-2"><i class="bi bi-lightbulb text-warning me-1"></i>${t('tip')}</div></div>
-    <div id="reader">${a.content}</div></div>${infoCard(a)}`;
+    <div id="reader">${a.content}</div></div>${infoCard(a,keep)}`;
   $('#moveBtn').onclick=async()=>{
     const v=$('#moveSel').value||null; if(v===(a.folder_id||null)) return;
     const f=folders.find(z=>z.id===v);
@@ -371,27 +394,42 @@ async function saveArticle(){
 }
 
 /* ---------- Highlight nhiều màu ---------- */
-function place(el,r,w){
-  el.style.display='block';
-  el.style.left=Math.min(innerWidth-w-8,Math.max(8,r.left))+'px';
-  let top=r.bottom+8; if(top+el.offsetHeight>innerHeight-8) top=Math.max(8,r.top-el.offsetHeight-8);
-  el.style.top=top+'px';
+const hidePop=el=>el.classList.remove('on');
+const hideMenu=()=>hidePop($('#hlMenu'));
+function rectsOf(x){ const a=[...x.getClientRects()].filter(r=>r.width>1&&r.height>1); return a.length?a:[x.getBoundingClientRect()]; }
+/* Đặt bảng cạnh vùng chữ (dưới dòng cuối / trên dòng đầu / bên phải / bên trái) để không đè lên chữ */
+function place(el,get,pref){
+  const rs=get(); if(!rs||!rs.length) return;
+  const f=rs[0], l=rs[rs.length-1], gap=10, vw=innerWidth, vh=innerHeight, w=el.offsetWidth, h=el.offsetHeight;
+  const L=Math.min(...rs.map(r=>r.left)), R=Math.max(...rs.map(r=>r.right)), cl=x=>Math.min(vw-w-8,Math.max(8,x)), sideTop=Math.min(vh-h-8,Math.max(8,f.top));
+  const cand={
+    below:()=>l.bottom+gap+h<=vh-8&&[cl(l.left),l.bottom+gap,0],
+    above:()=>f.top-gap-h>=8&&[cl(f.left),f.top-gap-h,1],
+    right:()=>R+gap+w<=vw-8&&[R+gap,sideTop,0],
+    left:()=>L-gap-w>=8&&[L-gap-w,sideTop,0]};
+  let pos=null; for(const k of (pref==='above'?['above','below','right','left']:['below','above','right','left'])){ pos=cand[k](); if(pos) break; }
+  if(!pos) pos=[cl(l.left),Math.min(vh-h-8,l.bottom+gap),0];
+  el.style.left=pos[0]+'px'; el.style.top=pos[1]+'px';
+  el.style.setProperty('--dy',pos[2]?'6px':'-6px'); el.style.setProperty('--oy',pos[2]?'100%':'0');
 }
-const hideMenu=()=>{$('#hlMenu').style.display='none';};
-function openMenu(rect,mark){
+function showPop(el,get,pref){ el._get=get; el._pref=pref; place(el,get,pref); el.classList.add('on'); }
+const reflow=()=>[$('#hlMenu'),$('#editor')].forEach(el=>{ if(el.classList.contains('on')&&el._get) place(el,el._get,el._pref); });
+addEventListener('scroll',()=>requestAnimationFrame(reflow),{passive:true}); addEventListener('resize',reflow);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ hideMenu(); hidePop($('#editor')); } });
+function openMenu(get,mark){
   menuMark=mark;
-  $('#hlColors').innerHTML=COLORS.map(c=>`<button class="hm-c" data-c="${c}">${t('c_'+c)}</button>`).join('');
+  $('#hlColors').innerHTML=COLORS.map(c=>`<button class="hm-c ${mark&&(mark.dataset.c||'yellow')===c?'cur':''}" data-c="${c}">${t('c_'+c)}</button>`).join('');
   const any=!!$('#reader mark');
   $('#actNote').style.display=$('#actRem').style.display=mark?'block':'none';
   $('#actAll').style.display=any?'block':'none';
-  $('#hlActs').style.display=(mark||any)?'block':'none';
-  place($('#hlMenu'),rect,210);
+  $('#hlActs').style.display=(mark||any)?'grid':'none';
+  showPop($('#hlMenu'),get);
 }
 function onSelect(){
   setTimeout(()=>{
     const s=getSelection(),r=$('#reader'); if(!r||s.isCollapsed||!r.contains(s.anchorNode)||!r.contains(s.focusNode)) return;
-    const rg=s.getRangeAt(0), am=rg.commonAncestorContainer.parentElement?.closest('mark')||(rg.commonAncestorContainer.nodeType===1&&rg.commonAncestorContainer.closest('mark'));
-    savedRange=rg.cloneRange(); openMenu(rg.getBoundingClientRect(), am&&r.contains(am)?am:null);
+    const rg=s.getRangeAt(0), am=rg.commonAncestorContainer.parentElement?.closest('mark')||(rg.commonAncestorContainer.nodeType===1&&rg.commonAncestorContainer.closest('mark')), mk=am&&r.contains(am)?am:null;
+    savedRange=rg.cloneRange(); openMenu(mk?()=>rectsOf(mk):()=>savedRange?rectsOf(savedRange):[], mk);
   },10);
 }
 document.addEventListener('mouseup',e=>{ if(!e.target.closest('#hlMenu,#editor')) onSelect(); });
@@ -399,8 +437,12 @@ document.addEventListener('touchend',e=>{ if(!e.target.closest('#hlMenu,#editor'
 document.addEventListener('mousedown',e=>{ if(!e.target.closest('#hlMenu')) hideMenu(); });
 $('#hlMenu').addEventListener('mousedown',e=>e.preventDefault());
 document.addEventListener('click',e=>{
-  const m=e.target.closest('#reader mark'); if(m&&getSelection().isCollapsed) openMenu(m.getBoundingClientRect(),m);
+  const m=e.target.closest('#reader mark'); if(m&&getSelection().isCollapsed) openMenu(()=>rectsOf(m),m);
 });
+$('#actCopy').onclick=async()=>{
+  const m=menuMark, txt=((m?m.textContent:(savedRange?savedRange.toString():''))||'').trim(); hideMenu(); if(!txt) return;
+  try{ await navigator.clipboard.writeText(txt); toast(t('copied')); }catch(e){ try{ document.execCommand('copy'); }catch(_){} }
+};
 async function createMark(c){
   const id='h'+Date.now().toString(36), m=document.createElement('mark'); m.dataset.id=id; m.dataset.c=c;
   const frag=savedRange.extractContents();
@@ -427,7 +469,7 @@ async function define(w){
 }
 $('#actLook').onclick=()=>{
   const m=menuMark, txt=((m?m.textContent:(savedRange?savedRange.toString():''))||'').replace(/\s+/g,' ').trim(); hideMenu(); if(!txt) return;
-  lk={text:txt,mark:m,result:''}; $('#editor').style.display='none'; $('#lkText').value=txt;
+  lk={text:txt,mark:m,result:''}; hidePop($('#editor')); $('#lkText').value=txt;
   bootstrap.Modal.getOrCreateInstance($('#lkModal')).show(); runLookup();
 };
 $('#lkGo').onclick=()=>runLookup(); $('#lkLang').onchange=()=>runLookup();
@@ -469,21 +511,19 @@ $('#actAll').onclick=async()=>{
 
 /* ---------- Ghi chú ---------- */
 function openEditor(m){
-  editId=m.dataset.id; $('#noteTxt').value=cur.notes[editId]||''; place($('#editor'),m.getBoundingClientRect(),300); $('#noteTxt').focus();
+  editId=m.dataset.id; $('#noteTxt').value=cur.notes[editId]||''; showPop($('#editor'),()=>rectsOf(m)); $('#noteTxt').focus({preventScroll:true});
 }
-$('#noteClose').onclick=()=>{$('#editor').style.display='none';};
+$('#noteClose').onclick=()=>{hidePop($('#editor'));};
 $('#noteSave').onclick=async()=>{
   const v=$('#noteTxt').value.trim(), m=$(`#reader mark[data-id="${editId}"]`);
   cur.notes[editId]=v; if(m) m.classList.toggle('has-note',!!v);
-  await saveArticle(); $('#editor').style.display='none';
+  await saveArticle(); hidePop($('#editor'));
 };
 document.addEventListener('mouseover',e=>{
   const m=e.target.closest('#reader mark'), tp=$('#tip');
-  if(!m||!cur){ tp.style.display='none'; return; }
-  const n=cur.notes[m.dataset.id]; if(!n){ tp.style.display='none'; return; }
-  tp.textContent=n; tp.style.display='block';
-  const b=m.getBoundingClientRect();
-  tp.style.left=Math.min(innerWidth-320,Math.max(8,b.left))+'px'; tp.style.top=Math.max(8,b.top-tp.offsetHeight-8)+'px';
+  if(!m||!cur){ hidePop(tp); return; }
+  const n=cur.notes[m.dataset.id]; if(!n){ hidePop(tp); return; }
+  tp.textContent=n; place(tp,()=>rectsOf(m),'above'); tp.classList.add('on');
 });
 </script>
 </body>
