@@ -28,7 +28,10 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg)}
 .auth-card{width:100%;max-width:420px;border:0;border-radius:16px;box-shadow:0 10px 40px rgba(207,23,23,.15)}
 .pw{position:relative}.pw .form-control{padding-right:44px}
 .eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:#888;padding:6px 10px}
-.side{background:var(--card);border-radius:14px;padding:14px;position:sticky;top:76px;max-height:calc(100vh - 92px);overflow:auto}
+.side{background:var(--card);border-radius:14px;padding:14px}
+#sideCanvas{--bs-offcanvas-width:min(86vw,340px)}
+@media(min-width:992px){#sideCanvas{position:sticky;top:76px}.side{max-height:calc(100vh - 92px);overflow:auto}}
+@media(max-width:991.98px){.side{background:transparent;padding:0}}
 .nav-item-x{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:500}
 .nav-item-x:hover{background:var(--hover)}.nav-item-x.on{background:var(--brand-l);color:var(--brand-t);font-weight:700}
 .nav-item-x .x{margin-left:auto;opacity:0;border:0;background:none;color:#999}.nav-item-x:hover .x{opacity:1}
@@ -79,7 +82,7 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
 
 <div id="appView" style="display:none">
   <header class="topbar"><div class="container-fluid px-3 px-lg-4 py-2 d-flex align-items-center">
-    <a class="brand fs-5" href="#"><i class="bi bi-newspaper me-2"></i>Readup Support News</a>
+    <button class="btn btn-outline-secondary d-lg-none me-2 px-2 py-1" data-bs-toggle="offcanvas" data-bs-target="#sideCanvas" aria-label="Menu"><i class="bi bi-list fs-5"></i></button><a class="brand fs-5 text-nowrap" href="#"><i class="bi bi-newspaper me-2 d-none d-sm-inline"></i><span class="d-none d-sm-inline">Readup Support News</span><span class="d-sm-none">Readup</span></a>
     <div class="ms-auto d-flex align-items-center gap-2">
       <div class="tools-slot"></div>
       <div class="dropdown">
@@ -93,13 +96,13 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
     </div>
   </div></header>
   <div class="container-fluid px-3 px-lg-4 py-3"><div class="row g-3">
-    <aside class="col-lg-3"><div class="side">
+    <aside class="col-lg-3"><div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sideCanvas"><div class="offcanvas-header border-bottom"><span class="brand"><i class="bi bi-folder2-open me-2"></i><span data-i18n="manage"></span></span><button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sideCanvas"></button></div><div class="offcanvas-body"><div class="side">
       <div class="nav-item-x on" id="navAll"><i class="bi bi-calendar3"></i><span data-i18n="all"></span></div>
       <div class="d-flex align-items-center mt-3 mb-1"><span class="small fw-bold text-muted ms-1" data-i18n="folders"></span><button class="btn btn-sm btn-outline-primary ms-auto py-0" id="addFolder"><i class="bi bi-folder-plus"></i></button></div>
       <div id="folderList"></div>
       <div class="small fw-bold text-muted mt-3 ms-1" data-i18n="arts"></div>
       <div id="artList"></div>
-    </div></aside>
+    </div></div></div></aside>
     <main class="col-lg-9">
       <div class="input-group input-group-lg mb-3 shadow-sm">
         <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
@@ -126,8 +129,18 @@ mark.has-note{box-shadow:inset 0 -2px 0 rgba(0,0,0,.45)}
   <div class="modal-footer border-0 justify-content-center"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" data-i18n="cancel"></button><button class="btn btn-primary" id="cfOk"></button></div>
 </div></div></div>
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index:3500"><div id="toastEl" class="toast text-bg-dark border-0"><div class="toast-body" id="toastMsg"></div></div></div>
+<div class="modal fade" id="lkModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content border-0">
+  <div class="modal-header"><h6 class="modal-title fw-bold"><i class="bi bi-translate me-2"></i><span data-i18n="lookup"></span></h6><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="modal-body">
+    <textarea id="lkText" class="form-control form-control-sm mb-2" rows="2"></textarea>
+    <div class="d-flex gap-2 mb-3"><select id="lkLang" class="form-select form-select-sm" style="width:auto"><option value="vi">Tiếng Việt</option><option value="en">English</option></select><button id="lkGo" class="btn btn-sm btn-primary"><i class="bi bi-search me-1"></i><span data-i18n="lookupGo"></span></button></div>
+    <div id="lkOut"></div><div id="lkLinks" class="d-flex flex-wrap gap-2 mt-3"></div>
+  </div>
+  <div class="modal-footer border-0"><button id="lkCopy" class="btn btn-sm btn-outline-secondary"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button id="lkInsert" class="btn btn-sm btn-primary"><i class="bi bi-journal-plus me-1"></i><span data-i18n="toNote"></span></button></div>
+</div></div></div>
 <div id="hlMenu">
   <div class="hm-t" data-i18n="hlColor"></div><div id="hlColors"></div>
+  <hr class="my-1"><button class="hm-a" id="actLook"><i class="bi bi-translate me-2"></i><span data-i18n="lookup"></span></button>
   <div id="hlActs"><hr class="my-1">
     <button class="hm-a" id="actNote"><i class="bi bi-chat-square-text me-2"></i><span data-i18n="note"></span></button>
     <button class="hm-a" id="actRem"><i class="bi bi-eraser me-2"></i><span data-i18n="removeHl"></span></button>
@@ -155,21 +168,21 @@ try{ lang=localStorage.getItem('lang')||(navigator.language||'').startsWith('vi'
 /* ---------- Ngôn ngữ ---------- */
 const I={
 vi:{tag:'Đọc báo, highlight và ghi chú từ vựng',login:'Đăng nhập',signup:'Tạo tài khoản',pass:'Mật khẩu',pass2:'Nhập lại mật khẩu',folders:'Thư mục',all:'Theo ngày (chưa phân loại)',arts:'Bài báo',urlPh:'Dán link bài báo vào đây…',read:'Đọc',
-emptyMain:'Dán link một bài báo để bắt đầu đọc, hoặc chọn bài đã lưu bên trái.',chpw:'Đổi mật khẩu',logout:'Đăng xuất',npw:'Mật khẩu mới',npw2:'Nhập lại mật khẩu mới',savepw:'Lưu mật khẩu',
+emptyMain:'Dán link một bài báo để bắt đầu đọc, hoặc chọn bài đã lưu trong danh sách bài báo.',chpw:'Đổi mật khẩu',logout:'Đăng xuất',npw:'Mật khẩu mới',npw2:'Nhập lại mật khẩu mới',savepw:'Lưu mật khẩu',
 noFolders:'Chưa có thư mục.',noArts:'Chưa có bài nào.',today:'Hôm nay',yest:'Hôm qua',enterCreds:'Vui lòng nhập email và mật khẩu.',pw6:'Mật khẩu cần ít nhất 6 ký tự.',pwMis:'Hai mật khẩu chưa khớp.',
 confirm:'Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi đăng nhập.',delFolder:'Xóa thư mục? Bài báo vẫn được giữ lại và xếp theo ngày.',folderName:'Tên thư mục mới:',badUrl:'Hãy dán một đường link hợp lệ (bắt đầu bằng http/https).',
 fetchFail:'Không tải được trang này. Hãy kiểm tra lại link hoặc thử bài khác (một số báo chặn đọc tự động / có paywall).',extractFail:'Không trích xuất được nội dung bài báo.',noFolderOpt:'Không thư mục (theo ngày)',source:'Nguồn',
 tip:'Bôi đen chữ cần học → chọn <b>màu highlight</b> → nhập ghi chú. Rê chuột vào chữ đã highlight để xem ghi chú, bấm vào để đổi màu, sửa ghi chú hoặc xóa.',delArt:'Xóa bài báo này? Bài báo cùng highlight và ghi chú sẽ bị xóa vĩnh viễn.',saveFail:'Lưu thất bại: ',pwDone:'Đã đổi mật khẩu.',
 noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Thêm / sửa ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
-c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin'},
+c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)'},
 en:{tag:'Read news, highlight and note new words',login:'Log in',signup:'Sign up',pass:'Password',pass2:'Confirm password',folders:'Folders',all:'By date (unfiled)',arts:'Articles',urlPh:'Paste an article link here…',read:'Read',
-emptyMain:'Paste an article link to start reading, or pick a saved article on the left.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
+emptyMain:'Paste an article link to start reading, or pick a saved article from your article list.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
 noFolders:'No folders yet.',noArts:'No articles yet.',today:'Today',yest:'Yesterday',enterCreds:'Please enter your email and password.',pw6:'Password must be at least 6 characters.',pwMis:'Passwords do not match.',
 confirm:'Account created. Check your email to confirm, then log in.',delFolder:'Delete this folder? Its articles are kept and grouped by date.',folderName:'New folder name:',badUrl:'Please paste a valid link (starting with http/https).',
 fetchFail:"Couldn't load this page. Check the link or try another article (some sites block automatic reading or have a paywall).",extractFail:"Couldn't extract the article content.",noFolderOpt:'No folder (by date)',source:'Source',
 tip:'Select the words to learn → pick a <b>highlight color</b> → write a note. Hover a highlight to see its note; click it to change color, edit the note or remove it.',delArt:'Delete this article? It and its highlights and notes will be permanently removed.',saveFail:'Save failed: ',pwDone:'Password updated.',
 noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Add / edit note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
-c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved'}};
+c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)'}};
 const t = k => I[lang][k] ?? k;
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
 const toolsHTML = () => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button>`;
@@ -197,6 +210,7 @@ function ask(msg,okText,danger=true){return new Promise(res=>{
   const onHide=()=>fin(false);
   ok.onclick=()=>{ fin(true); m.hide(); }; el.addEventListener('hidden.bs.modal',onHide); m.show(); });}
 function toast(msg){ $('#toastMsg').textContent=msg; bootstrap.Toast.getOrCreateInstance($('#toastEl'),{delay:2600}).show(); }
+function closeSide(){ if(innerWidth<992){ const o=bootstrap.Offcanvas.getInstance($('#sideCanvas')); if(o) o.hide(); } }
 const loader = on => $('#loader').classList.toggle('hide', !on);
 const alertBox = (el,msg,type='danger') => $(el).innerHTML = msg ? `<div class="alert alert-${type} py-2 small">${msg}</div>` : '';
 const loc = () => lang==='vi'?'vi-VN':'en-GB';
@@ -267,7 +281,7 @@ $('#addFolder').onclick=async()=>{
 };
 $('#artList').onclick=async e=>{
   const a=e.target.closest('[data-a]'); if(!a) return;
-  loader(true); const {data}=await sb.from('articles').select('*').eq('id',a.dataset.a).single(); loader(false); if(data) openArticle(data);
+  loader(true); const {data}=await sb.from('articles').select('*').eq('id',a.dataset.a).single(); loader(false); if(data){ closeSide(); openArticle(data); }
 };
 
 /* ---------- Lấy bài báo ---------- */
@@ -387,15 +401,64 @@ $('#hlMenu').addEventListener('mousedown',e=>e.preventDefault());
 document.addEventListener('click',e=>{
   const m=e.target.closest('#reader mark'); if(m&&getSelection().isCollapsed) openMenu(m.getBoundingClientRect(),m);
 });
-$('#hlColors').onclick=async e=>{
-  const b=e.target.closest('[data-c]'); if(!b) return; const c=b.dataset.c; hideMenu();
-  if(menuMark){ menuMark.dataset.c=c; return saveArticle(); }
-  if(!savedRange) return;
+async function createMark(c){
   const id='h'+Date.now().toString(36), m=document.createElement('mark'); m.dataset.id=id; m.dataset.c=c;
   const frag=savedRange.extractContents();
   frag.querySelectorAll('mark').forEach(x=>{ delete cur.notes[x.dataset.id]; x.replaceWith(...x.childNodes); });
   m.appendChild(frag); savedRange.insertNode(m); getSelection().removeAllRanges(); savedRange=null;
-  cur.notes[id]=''; await saveArticle(); openEditor(m);
+  cur.notes[id]=''; return m;
+}
+$('#hlColors').onclick=async e=>{
+  const b=e.target.closest('[data-c]'); if(!b) return; const c=b.dataset.c; hideMenu();
+  if(menuMark){ menuMark.dataset.c=c; return saveArticle(); }
+  if(!savedRange) return;
+  const m=await createMark(c); await saveArticle(); openEditor(m);
+};
+
+/* ---------- Tra cứu từ / cụm từ / câu ---------- */
+let lk={text:'',mark:null,result:''}, lkSeq=0;
+async function gtranslate(q,tl){
+  try{ const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl='+tl+'&dt=t&q='+encodeURIComponent(q)); if(r.ok){ const j=await r.json(); const x=(j[0]||[]).map(a=>a[0]).join(''); if(x) return x; } }catch(e){}
+  try{ const r=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(q.slice(0,480))+'&langpair='+(tl==='vi'?'en|vi':'vi|en')); const j=await r.json(); const x=j.responseData&&j.responseData.translatedText; if(x) return x; }catch(e){}
+  return '';
+}
+async function define(w){
+  try{ const r=await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/'+encodeURIComponent(w.toLowerCase())); if(!r.ok) return null; const j=await r.json(); return j[0]||null; }catch(e){ return null; }
+}
+$('#actLook').onclick=()=>{
+  const m=menuMark, txt=((m?m.textContent:(savedRange?savedRange.toString():''))||'').replace(/\s+/g,' ').trim(); hideMenu(); if(!txt) return;
+  lk={text:txt,mark:m,result:''}; $('#editor').style.display='none'; $('#lkText').value=txt;
+  bootstrap.Modal.getOrCreateInstance($('#lkModal')).show(); runLookup();
+};
+$('#lkGo').onclick=()=>runLookup(); $('#lkLang').onchange=()=>runLookup();
+$('#lkOut').onclick=e=>{ const b=e.target.closest('#lkAudio'); if(b) new Audio(b.dataset.src).play(); };
+async function runLookup(){
+  const q=$('#lkText').value.replace(/\s+/g,' ').trim().slice(0,1500); if(!q) return;
+  const my=++lkSeq, tl=$('#lkLang').value, isWord=/^[\p{L}'’-]+$/u.test(q), short=q.split(' ').length<=3, out=$('#lkOut');
+  out.innerHTML=`<div class="text-muted small"><span class="spinner-border spinner-border-sm me-2"></span>${t('lkWait')}</div>`; lk.result='';
+  const e=encodeURIComponent(q), w=encodeURIComponent(q.toLowerCase()), slug=encodeURIComponent(q.toLowerCase().replace(/\s+/g,'-')), L=[];
+  if(short){ L.push(['Oxford',`https://www.oxfordlearnersdictionaries.com/search/english/?q=${w}`],['Cambridge',`https://dictionary.cambridge.org/dictionary/english/${slug}`],['Cambridge EN–VI',`https://dictionary.cambridge.org/dictionary/english-vietnamese/${slug}`]); }
+  L.push(['Google Translate',`https://translate.google.com/?sl=auto&tl=${tl}&text=${e}&op=translate`],['DeepL',`https://www.deepl.com/translator#auto/${tl}/${e}`]);
+  $('#lkLinks').innerHTML=L.map(([n,h])=>`<a class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" href="${h}"><i class="bi bi-box-arrow-up-right me-1"></i>${n}</a>`).join('');
+  const [tr,df]=await Promise.all([gtranslate(q,tl),(isWord&&tl==='vi')?define(q):Promise.resolve(null)]);
+  if(my!==lkSeq) return;
+  let html='', txt=tr||'';
+  html+= tr ? `<div class="small text-muted">${t('lkTrans')}</div><div class="fs-5 fw-semibold" style="color:var(--brand-t)">${esc(tr)}</div>` : `<div class="alert alert-warning py-2 small">${t('lkFail')}</div>`;
+  if(df){
+    const ph=df.phonetic||((df.phonetics||[]).find(p=>p.text)||{}).text||'', au=((df.phonetics||[]).find(p=>p.audio)||{}).audio||'', ms=(df.meanings||[]).slice(0,3);
+    html+=`<div class="d-flex align-items-center gap-2 mt-3"><span class="fw-bold">${esc(df.word)}</span><span class="text-muted">${esc(ph)}</span>${au?`<button class="btn btn-sm btn-outline-secondary py-0" id="lkAudio" data-src="${esc(au)}"><i class="bi bi-volume-up"></i></button>`:''}</div><div class="small text-muted mt-2">${t('lkDef')}</div>`;
+    html+=ms.map(m=>`<div class="mt-1"><i class="text-muted">${esc(m.partOfSpeech)}</i><ol class="mb-1 ps-3">${(m.definitions||[]).slice(0,2).map(d=>`<li>${esc(d.definition)}${d.example?`<div class="small text-muted fst-italic">“${esc(d.example)}”</div>`:''}</li>`).join('')}</ol></div>`).join('');
+    const d0=ms[0]&&ms[0].definitions&&ms[0].definitions[0];
+    txt=`${q}${ph?' '+ph:''}${tr?' = '+tr:''}${d0?`\n(${ms[0].partOfSpeech}) ${d0.definition}`:''}`;
+  } else if(isWord&&tl==='vi') html+=`<div class="small text-muted mt-3">${t('lkNoDict')}</div>`;
+  out.innerHTML=html; lk.result=txt;
+}
+$('#lkCopy').onclick=async()=>{ if(!lk.result) return; try{ await navigator.clipboard.writeText(lk.result); toast(t('copied')); }catch(e){} };
+$('#lkInsert').onclick=async()=>{
+  if(!lk.result) return; let m=lk.mark;
+  if(!m){ if(!savedRange) return; m=await createMark('yellow'); }
+  const old=(cur.notes[m.dataset.id]||'').trim(); cur.notes[m.dataset.id]=old?old+'\n'+lk.result:lk.result; m.classList.add('has-note');
+  await saveArticle(); bootstrap.Modal.getOrCreateInstance($('#lkModal')).hide(); toast(t('noteAdded'));
 };
 $('#actNote').onclick=()=>{ const m=menuMark; hideMenu(); if(m) openEditor(m); };
 $('#actRem').onclick=async()=>{ const m=menuMark; hideMenu(); if(!m) return; delete cur.notes[m.dataset.id]; m.replaceWith(...m.childNodes); $('#reader').normalize(); await saveArticle(); };
