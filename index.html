@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Readup Support News</title>
-<script>try{const s=localStorage.getItem('theme');document.documentElement.dataset.bsTheme=s||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Readup"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#cf1717">
+<link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
+<script>try{const f=localStorage.getItem('fs');if(f)document.documentElement.style.setProperty('--rf',f+'rem')}catch(e){}try{const s=localStorage.getItem('theme');document.documentElement.dataset.bsTheme=s||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')}catch(e){}</script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -39,7 +43,7 @@ body{font-family:'Montserrat',system-ui,sans-serif;background:var(--bg)}
 .art{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:.84rem;line-height:1.35;border-left:3px solid transparent}
 .art:hover{background:var(--hover)}.art.on{border-left-color:#cf1717;background:var(--brand-l)}
 .reader-card{background:var(--card);border-radius:14px;padding:clamp(18px,4vw,44px)}
-#reader{font-size:1.08rem;line-height:1.85;max-width:72ch;margin:auto}
+#reader{font-size:var(--rf,1.08rem);line-height:1.85;max-width:72ch;margin:auto}
 #reader img{max-width:100%;height:auto;border-radius:10px;margin:14px 0}
 #reader h2,#reader h3{font-weight:700;margin-top:1.6em}#reader figure{margin:0}#reader figcaption{font-size:.8rem;color:#888}
 .reader-card .table{--bs-table-bg:transparent}
@@ -81,6 +85,7 @@ mark{transition:background-color .25s ease,box-shadow .25s ease}
 button,.btn,.nav-item-x,.art{touch-action:manipulation}
 .hm-note{font-size:.82rem;white-space:pre-wrap;background:var(--note);border:1px solid var(--note-b);border-radius:8px;padding:6px 8px;margin-bottom:8px;max-height:96px;overflow:auto}
 #favBtn i{color:#f5b301}
+#sgBody{max-height:340px;overflow:auto}
 </style>
 </head>
 <body>
@@ -117,7 +122,7 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
         <button class="btn btn-outline-secondary rounded-pill dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person-circle me-1"></i><span id="uMail" class="d-none d-md-inline"></span></button>
         <ul class="dropdown-menu dropdown-menu-end shadow border-0">
           <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#pwModal"><i class="bi bi-key me-2"></i><span data-i18n="chpw"></span></button></li>
-          <li><hr class="dropdown-divider"></li>
+          <li><button class="dropdown-item" id="instBtn"><i class="bi bi-phone me-2"></i><span data-i18n="install"></span></button></li><li><hr class="dropdown-divider"></li>
           <li><button class="dropdown-item text-danger" id="logout"><i class="bi bi-box-arrow-right me-2"></i><span data-i18n="logout"></span></button></li>
         </ul>
       </div>
@@ -166,6 +171,7 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
   </div>
   <div class="modal-footer border-0"><button id="lkCopy" class="btn btn-sm btn-outline-secondary"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button id="lkInsert" class="btn btn-sm btn-primary"><i class="bi bi-journal-plus me-1"></i><span data-i18n="toNote"></span></button></div>
 </div></div></div>
+<div class="modal fade" id="instModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h6 class="modal-title fw-bold"><i class="bi bi-phone me-2"></i><span data-i18n="install"></span></h6><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body small" id="instBody"></div></div></div></div>
 <div id="hlMenu" class="pop">
   <div id="hlNote" class="hm-note" style="display:none"></div><div class="hm-t" data-i18n="hlColor"></div><div id="hlColors"></div>
   <hr class="my-1"><div class="hm-g"><button class="hm-a" id="actCopy"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button class="hm-a" id="actLook"><i class="bi bi-translate me-1"></i><span data-i18n="lookupGo"></span></button></div>
@@ -202,7 +208,7 @@ confirm:'Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi 
 fetchFail:'Không tải được trang này. Hãy kiểm tra lại link hoặc thử bài khác (một số báo chặn đọc tự động / có paywall).',extractFail:'Không trích xuất được nội dung bài báo.',noFolderOpt:'Không thư mục (theo ngày)',source:'Nguồn',
 tip:'Bôi đen chữ cần học → chọn <b>màu highlight</b> → nhập ghi chú. Rê chuột vào chữ đã highlight để xem ghi chú, bấm vào để đổi màu, sửa ghi chú hoặc xóa.',delArt:'Xóa bài báo này? Bài báo cùng highlight và ghi chú sẽ bị xóa vĩnh viễn.',saveFail:'Lưu thất bại: ',pwDone:'Đã đổi mật khẩu.',
 noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
-c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại'},
+c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại',sg:'Gợi ý từ',sgTopic:'Chủ đề',sgLevel:'Độ khó',lvl1:'Dễ',lvl2:'Vừa',lvl3:'Khó',sgPhrases:'Cụm từ nên học',sgWords:'Từ vựng đáng chú ý',sgNone:'Chưa có gợi ý phù hợp. Thử giảm độ khó nhé.',sgNF:'Không tìm thấy cụm này trong bài để highlight (có thể bị xen link).',sgAdded:'Đã highlight và thêm nghĩa vào ghi chú',sgNoList:'Chưa tải được danh sách từ phổ biến nên gợi ý có thể chưa chính xác.',install:'Cài như app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Bấm nút <b>Chia sẻ</b> (hình vuông có mũi tên lên).</li><li>Chọn <b>Thêm vào Màn hình chính</b>.</li><li>Bấm <b>Thêm</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Cài đặt ứng dụng</b> hoặc <b>Thêm vào màn hình chính</b>.<div class="text-muted mt-2">Lần đầu mở bằng icon, bạn cần đăng nhập lại.</div>'},
 en:{tag:'Read news, highlight and note new words',login:'Log in',signup:'Sign up',pass:'Password',pass2:'Confirm password',folders:'Folders',all:'By date (unfiled)',arts:'Articles',urlPh:'Paste an article link here…',read:'Read',
 emptyMain:'Paste an article link to start reading, or pick a saved article from your article list.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
 noFolders:'No folders yet.',noArts:'No articles yet.',today:'Today',yest:'Yesterday',enterCreds:'Please enter your email and password.',pw6:'Password must be at least 6 characters.',pwMis:'Passwords do not match.',
@@ -210,7 +216,7 @@ confirm:'Account created. Check your email to confirm, then log in.',delFolder:'
 fetchFail:"Couldn't load this page. Check the link or try another article (some sites block automatic reading or have a paywall).",extractFail:"Couldn't extract the article content.",noFolderOpt:'No folder (by date)',source:'Source',
 tip:'Select the words to learn → pick a <b>highlight color</b> → write a note. Hover a highlight to see its note; click it to change color, edit the note or remove it.',delArt:'Delete this article? It and its highlights and notes will be permanently removed.',saveFail:'Save failed: ',pwDone:'Password updated.',
 noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
-c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it'}};
+c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it',sg:'Word tips',sgTopic:'Topic',sgLevel:'Level',lvl1:'Easy',lvl2:'Medium',lvl3:'Hard',sgPhrases:'Phrases worth learning',sgWords:'Words worth noting',sgNone:'No suitable suggestions yet. Try a lower level.',sgNF:"Couldn't find this phrase in the text to highlight (it may span a link).",sgAdded:'Highlighted and added the meaning to the note',sgNoList:"Couldn't load the common-word list, so suggestions may be less accurate.",install:'Install as app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Tap the <b>Share</b> button (square with an up arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Install app</b> or <b>Add to Home screen</b>.<div class="text-muted mt-2">Log in again the first time you open it from the icon.</div>'}};
 const t = k => I[lang][k] ?? k;
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
 const toolsHTML = () => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button>`;
@@ -361,6 +367,71 @@ $('#fetchBtn').onclick=async()=>{
 $('#urlIn').addEventListener('keydown',e=>e.key==='Enter'&&$('#fetchBtn').click());
 
 /* ---------- Trình đọc ---------- */
+/* ---------- Cỡ chữ ---------- */
+const fsGet=()=>parseFloat(lsGet('fs'))||1.08;
+function fsSet(v){ v=Math.round(Math.min(1.8,Math.max(.85,v))*100)/100; document.documentElement.style.setProperty('--rf',v+'rem'); try{ localStorage.setItem('fs',v); }catch(e){} hideAll(); }
+$('#instBtn').onclick=()=>{ $('#instBody').innerHTML=t('installSteps'); bootstrap.Modal.getOrCreateInstance($('#instModal')).show(); };
+
+/* ---------- Gợi ý từ / cụm từ (miễn phí, chạy ngay trong trình duyệt) ---------- */
+const STOPS=new Set('the be to of and a in that have i it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us is are was were been has had did does said made since while during until within without between against among across before under although though whether however therefore already still very much many more such each both several every wider fallen'.split(' '));
+const TOPIC={edu:'school pupil student teacher education curriculum exam universit classroom lesson tuition learning',eco:'econom market inflation tax bank growth trade business invest price profit budget debt wage',pol:'government minister election parliament policy party vote council mayor campaign president reform',health:'health hospital patient disease doctor treatment mental medical drug surgery symptom',tech:'technolog software digital data internet computer robot online cyber algorithm device',env:'climate energy carbon pollution wildlife emission renewable environment species forest fossil warming',sci:'research scientist study experiment discover evidence theory laborator',law:'police court crime trial prison judge arrest lawyer sentence'};
+const TL={vi:{edu:'Giáo dục',eco:'Kinh tế',pol:'Chính trị',health:'Sức khỏe',tech:'Công nghệ',env:'Môi trường',sci:'Khoa học',law:'Pháp luật'},en:{edu:'Education',eco:'Economy',pol:'Politics',health:'Health',tech:'Technology',env:'Environment',sci:'Science',law:'Law & crime'}};
+const PART=new Set(['up','down','out','off','over','back','away','through','around','apart','into']);
+const VERB=/^(set|put|take|took|taken|give|gave|come|came|go|went|get|got|turn|bring|brought|carry|carried|break|broke|look|run|ran|pick|pull|hold|held|keep|kept|make|made|clos|shut|cut|point|work|find|found|step|stand|move|roll|call|hand|build|built|fall|fell|pass|show|sign|pay|paid|sort|sell|sold|speak|spoke|throw|threw|try|tried|wind|wipe)(e|es|s|ed|d|ing)?$/;
+let FREQ=null;
+async function loadFreq(){
+  if(FREQ) return FREQ; let tx=lsGet('freq10k');
+  if(!tx){ try{ const r=await fetch('https://cdn.jsdelivr.net/gh/first20hours/google-10000-english@master/google-10000-english-no-swears.txt'); if(r.ok){ tx=await r.text(); try{ localStorage.setItem('freq10k',tx); }catch(e){} } }catch(e){} }
+  FREQ=new Map(); if(tx) tx.split(/\s+/).filter(Boolean).forEach((w,i)=>FREQ.set(w,i)); return FREQ;
+}
+function rk(w){
+  if(STOPS.has(w)) return 0; let b=1e9;
+  for(const x of [w,w.replace(/ies$/,'y'),w.replace(/es$/,''),w.replace(/s$/,''),w.replace(/ied$/,'y'),w.replace(/ed$/,''),w.replace(/d$/,''),w.replace(/ing$/,''),w.replace(/ing$/,'e'),w.replace(/ly$/,'')]){ const r=FREQ.get(x); if(r!==undefined&&r<b) b=r; }
+  return b;
+}
+function analyze(text,lvl){
+  const lo=[2500,4000,6500][lvl-1], W=new Map(), P=new Map(), all=[];
+  const add=(m,k,sc)=>{ const o=m.get(k)||{n:0,sc}; o.n++; m.set(k,o); };
+  for(const cl of text.split(/[.,;:!?()"“”\n—–]+/)){
+    const tk=(cl.match(/[A-Za-z][A-Za-z'’-]*/g)||[]).map((x,i)=>{ const w=x.toLowerCase().replace(/['’]s$/,''); return {w,acr:/^[A-Z]{2,}$/.test(x),pr:/^[A-Z]/.test(x)&&(i>0||rk(w)>=1e9)}; });
+    tk.forEach(o=>all.push(o.w));
+    const C=o=>!o.pr&&!o.acr&&o.w.length>=3&&rk(o.w)>=300, H=(...a)=>Math.max(...a.map(o=>rk(o.w)))>lo;
+    tk.forEach((a,i)=>{
+      const b=tk[i+1], c=tk[i+2];
+      if(!a.pr&&!a.acr&&a.w.length>=5&&/^[a-z]+(-[a-z]+)?$/.test(a.w)&&rk(a.w)>lo) add(W,a.w,(rk(a.w)>=1e9?3:5)+(/(tion|ment|ity|ive|ous|ance|ence|ical)s?$/.test(a.w)?1:0));
+      if(b&&!a.pr&&PART.has(b.w)&&VERB.test(a.w)) add(P,a.w+' '+b.w,6);
+      else if(b&&C(a)&&C(b)&&H(a,b)) add(P,a.w+' '+b.w,4);
+      if(c&&C(a)&&C(c)&&['of','for','to','in','on','with'].includes(b.w)&&H(a,c)) add(P,a.w+' '+b.w+' '+c.w,3);
+    });
+  }
+  const top=(m,k)=>[...m.entries()].sort((x,y)=>(y[1].sc+y[1].n*2)-(x[1].sc+x[1].n*2)).slice(0,k);
+  const phrases=top(P,8), pw=new Set(phrases.flatMap(p=>p[0].split(' ')));
+  const words=top(new Map([...W].filter(([w])=>!pw.has(w))),14);
+  const tp=Object.entries(TOPIC).map(([k,v])=>{ const st=v.split(' '); return [k,all.filter(w=>st.some(x=>w.startsWith(x))).length]; }).filter(x=>x[1]>=3).sort((x,y)=>y[1]-x[1]).slice(0,2);
+  return {phrases,words,topics:tp.map(x=>x[0])};
+}
+async function gbatch(arr){
+  if(!arr.length) return null;
+  try{ const r=await fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q='+encodeURIComponent(arr.join('\n'))); const j=await r.json(); const o=(j[0]||[]).map(x=>(x[0]||'').replace(/\n+$/,'')); return o.length===arr.length?o:null; }catch(e){ return null; }
+}
+async function openSug(){
+  const box=$('#sgBody'); if(!box||!cur) return;
+  box.innerHTML=`<div class="text-muted small"><span class="spinner-border spinner-border-sm me-2"></span>${t('lkWait')}</div>`;
+  const F=await loadFreq(), lvl=+(lsGet('sgl')||2), r=analyze($('#reader').innerText,lvl), items=[...r.phrases,...r.words].map(x=>x[0]);
+  const row=([k,o])=>`<div class="sg-row d-flex align-items-center gap-2 py-1 border-bottom" data-t="${esc(k)}"><div class="flex-grow-1"><b>${esc(k)}</b>${o.n>1?` <span class="badge text-bg-secondary">×${o.n}</span>`:''}<div class="sg-m small text-muted"></div></div><button class="btn btn-sm btn-outline-secondary" data-look><i class="bi bi-translate"></i></button><button class="btn btn-sm btn-primary" data-add><i class="bi bi-plus-lg"></i></button></div>`;
+  box.innerHTML=`<div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="small fw-semibold">${t('sgTopic')}:</span>${r.topics.map(k=>`<span class="badge text-bg-danger">${TL[lang][k]}</span>`).join('')||'<span class="small text-muted">—</span>'}<span class="ms-auto small">${t('sgLevel')}</span><select id="sgLvl" class="form-select form-select-sm" style="width:auto">${[1,2,3].map(i=>`<option value="${i}" ${i===lvl?'selected':''}>${t('lvl'+i)}</option>`).join('')}</select></div>`
+    +(F.size?'':`<div class="alert alert-warning py-1 small">${t('sgNoList')}</div>`)
+    +(r.phrases.length?`<div class="small fw-bold mt-2">${t('sgPhrases')}</div>${r.phrases.map(row).join('')}`:'')
+    +(r.words.length?`<div class="small fw-bold mt-2">${t('sgWords')}</div>${r.words.map(row).join('')}`:'')
+    +(items.length?'':`<div class="small text-muted">${t('sgNone')}</div>`);
+  const tr=await gbatch(items); if(tr) box.querySelectorAll('.sg-row').forEach((el,i)=>{ el.querySelector('.sg-m').textContent=tr[i]||''; });
+}
+async function addSug(row,btn){
+  const txt=row.dataset.t, rg=findRange(txt); if(!rg){ toast(t('sgNF')); return; }
+  btn.disabled=true; const mn=row.querySelector('.sg-m').textContent||await gtranslate(txt,'vi');
+  const m=await createMark('green',rg); cur.notes[m.dataset.id]=mn?`${txt} = ${mn}`:''; m.classList.toggle('has-note',!!mn);
+  await saveArticle(); btn.innerHTML='<i class="bi bi-check2-lg"></i>'; btn.className='btn btn-sm btn-success'; toast(t('sgAdded'));
+}
 function fmtD(v){ if(!v) return ''; const d=new Date(v); return isNaN(d)?v:d.toLocaleDateString(loc(),{year:'numeric',month:'long',day:'numeric'}); }
 function infoCard(a,keep){
   const m=a.meta||{}, fo=folders.find(f=>f.id===a.folder_id);
@@ -384,10 +455,14 @@ function openArticle(a,keep,restore){
       <a href="${esc(a.url)}" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-box-arrow-up-right me-1"></i>${t('source')}</a>
       <span>${new Date(a.created_at).toLocaleString(loc())}</span>
       <div class="input-group input-group-sm ms-auto" style="width:auto"><select id="moveSel" class="form-select"><option value="">${t('noFolderOpt')}</option>${folders.map(f=>`<option value="${f.id}" ${a.folder_id===f.id?'selected':''}>${esc(f.name)}</option>`).join('')}</select><button class="btn btn-outline-primary" id="moveBtn"><i class="bi bi-folder-symlink me-1"></i>${t('moveBtn')}</button></div>
-      <button class="btn btn-sm btn-outline-warning" id="favBtn" title="${t('fav')}"><i class="bi bi-star${a.favorite?'-fill':''}"></i></button><button class="btn btn-sm btn-outline-secondary" id="linkBtn" title="${t('linkCopied')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-outline-danger" id="delArt"><i class="bi bi-trash me-1"></i>${t('delBtn')}</button>
+      <div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" id="fsDn" title="A−">A−</button><button class="btn btn-outline-secondary" id="fsUp" title="A+">A+</button></div><button class="btn btn-sm btn-outline-primary" id="sgBtn"><i class="bi bi-lightbulb me-1"></i><span class="d-none d-sm-inline">${t('sg')}</span></button><button class="btn btn-sm btn-outline-warning" id="favBtn" title="${t('fav')}"><i class="bi bi-star${a.favorite?'-fill':''}"></i></button><button class="btn btn-sm btn-outline-secondary" id="linkBtn" title="${t('linkCopied')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-outline-danger" id="delArt"><i class="bi bi-trash me-1"></i>${t('delBtn')}</button>
     </div>
-    <div class="alert bg-body-tertiary border small py-2"><i class="bi bi-lightbulb text-warning me-1"></i>${t('tip')}</div></div>
+    <div class="alert bg-body-tertiary border small py-2"><i class="bi bi-lightbulb text-warning me-1"></i>${t('tip')}</div><div class="collapse" id="sgBox"><div class="border rounded-3 p-2 mb-3" id="sgBody"></div></div></div>
     <div id="reader">${a.content}</div></div>${infoCard(a,keep)}`;
+  $('#fsUp').onclick=()=>fsSet(fsGet()+.08); $('#fsDn').onclick=()=>fsSet(fsGet()-.08);
+  $('#sgBtn').onclick=()=>{ const bx=$('#sgBox'), c=bootstrap.Collapse.getOrCreateInstance(bx,{toggle:false}); if(bx.classList.contains('show')) c.hide(); else { c.show(); openSug(); } };
+  $('#sgBody').addEventListener('click',e=>{ const row=e.target.closest('.sg-row'); if(!row) return; if(e.target.closest('[data-look]')){ lk.range=null; openLookup(row.dataset.t,null,'vi'); } const ad=e.target.closest('[data-add]'); if(ad&&!ad.disabled) addSug(row,ad); });
+  $('#sgBody').addEventListener('change',e=>{ if(e.target.id==='sgLvl'){ try{ localStorage.setItem('sgl',e.target.value); }catch(_){} openSug(); } });
   $('#favBtn').onclick=async()=>{
     const v=!a.favorite; const {error}=await sb.from('articles').update({favorite:v}).eq('id',a.id); if(error) return alert(t('favSql'));
     a.favorite=v; const x=articles.find(z=>z.id===a.id); if(x) x.favorite=v;
@@ -506,8 +581,8 @@ async function createMark(c,range){
   cur.notes[id]=''; return m;
 }
 function findRange(txt){
-  const r=$('#reader'); if(!r||!txt) return null; const w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT); let n;
-  while((n=w.nextNode())){ const i=n.nodeValue.indexOf(txt); if(i>=0){ const g=document.createRange(); g.setStart(n,i); g.setEnd(n,i+txt.length); return g; } }
+  const r=$('#reader'); if(!r||!txt) return null; const q=txt.toLowerCase(), w=document.createTreeWalker(r,NodeFilter.SHOW_TEXT); let n;
+  while((n=w.nextNode())){ if(n.parentElement.closest('mark')) continue; const i=n.nodeValue.replace(/\u00a0/g,' ').toLowerCase().indexOf(q); if(i>=0){ const g=document.createRange(); g.setStart(n,i); g.setEnd(n,i+txt.length); return g; } }
   return null;
 }
 $('#hlColors').onclick=async e=>{
