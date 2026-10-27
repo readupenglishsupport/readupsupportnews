@@ -53,8 +53,8 @@
     hosts.forEach(async h=>{ HF[h]=(await loadFeed(h)).map(it=>({...it,tp:topicsOf(it)})); paint(hosts); });
   };
 
-  /* Mọi link http(s) trong web → mở cửa sổ nhỏ như khi bấm bài ở ngoài.
-     Ngoại lệ: link nằm trong nội dung bài báo đã lưu (#reader) giữ nguyên hành vi cũ. */
+  /* Mọi link http(s) trong web (kể cả link nằm trong nội dung bài báo đã lưu) → mở cửa sổ nhỏ riêng,
+     không làm mất trang đang đọc. */
   function popLink(u){
     if(matchMedia('(pointer:coarse)').matches){ window.open(u,'_blank','noopener'); return; }
     const W=Math.min(1000,screen.availWidth-80), H=Math.min(820,screen.availHeight-80), L=Math.max(0,screen.availWidth-W-40);
@@ -64,7 +64,7 @@
   }
   document.addEventListener('click',e=>{
     if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey) return;
-    const a=e.target.closest&&e.target.closest('a[href]'); if(!a||a.closest('#reader')) return;
+    const a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
     if(!/^https?:\/\//i.test(a.getAttribute('href')||'')) return;
     e.preventDefault(); popLink(a.href);
   },true);
