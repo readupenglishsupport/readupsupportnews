@@ -489,7 +489,7 @@ async function gbatch(arr){
 async function openSug(){
   const box=$('#sgBody'); if(!box||!cur) return;
   box.innerHTML=`<div class="text-muted small"><span class="spinner-border spinner-border-sm me-2"></span>${t('lkWait')}</div>`;
-  const F=await loadFreq(), lvl=+(lsGet('sgl')||2), r=analyze($('#reader').innerText,lvl), items=[...r.phrases,...r.words].map(x=>x[0]);
+  const F=await loadFreq(), lvl=+(lsGet('sgl')||2), r=analyze($('#reader').innerText||$('#reader').textContent||'',lvl), items=[...r.phrases,...r.words].map(x=>x[0]);
   const row=([k,o])=>`<div class="sg-row d-flex align-items-center gap-2 py-1 border-bottom" data-t="${esc(k)}"><div class="flex-grow-1"><b>${esc(k)}</b>${o.n>1?` <span class="badge text-bg-secondary">×${o.n}</span>`:''}<div class="sg-m small text-muted"></div></div><button class="btn btn-sm btn-outline-secondary" data-look><i class="bi bi-translate"></i></button><button class="btn btn-sm btn-primary" data-add><i class="bi bi-plus-lg"></i></button></div>`;
   box.innerHTML=`<div class="d-flex flex-wrap align-items-center gap-2 mb-2"><span class="small fw-semibold">${t('sgTopic')}:</span>${r.topics.map(k=>`<span class="badge text-bg-danger">${TL[lang][k]}</span>`).join('')||'<span class="small text-muted">—</span>'}<span class="ms-auto small">${t('sgLevel')}</span><select id="sgLvl" class="form-select form-select-sm" style="width:auto">${[1,2,3].map(i=>`<option value="${i}" ${i===lvl?'selected':''}>${t('lvl'+i)}</option>`).join('')}</select></div>`
     +(F.size?'':`<div class="alert alert-warning py-1 small">${t('sgNoList')}</div>`)
@@ -576,7 +576,7 @@ async function saveArticle(){
 const hidePop=el=>el.classList.remove('on');
 const hideMenu=()=>hidePop($('#hlMenu'));
 const hideAll=()=>{ hideMenu(); hidePop($('#editor')); hidePop($('#tip')); };
-const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 const canHover=matchMedia('(hover:hover)').matches;
 let down=false, inUI=false, uiT=null, selT=null, lastOpen=0, posT=null;
 const selText=()=>((menuMark?menuMark.textContent:(savedRange?savedRange.toString():''))||'').replace(/\s+/g,' ').trim();
