@@ -197,7 +197,18 @@ function topicsOf(it){
   const tk=((it.title+' '+it.title+' '+(it.desc||'')+' '+(it.cats||[]).join(' ')).toLowerCase().match(/[a-z]+/g)||[]);
   return Object.entries(TOPIC).map(([k,v])=>{ const st=v.split(' '); return [k,tk.filter(w=>st.some(x=>w.startsWith(x))).length]; }).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
 }
-const card=it=>{ const sv=articles.some(a=>a.url===it.link); return `<div class="feed-card" data-u="${esc(it.link)}">${it.img?`<img src="${esc(it.img)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:'<div class="feed-ph"><i class="bi bi-newspaper"></i></div>'}<div class="p-2"><div class="feed-t">${esc(it.title)}</div><div class="small text-muted mt-1">${it.date?ago(it.date):''}${sv?` · <i class="bi bi-check2-circle text-success"></i> ${t('feedSaved')}`:''}</div><div class="d-flex gap-1 mt-2"><button class="btn btn-sm btn-outline-secondary flex-fill" data-fa="copy" title="${t('srcCopy')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-primary flex-fill" data-fa="save" title="${t('saveRead')}"><i class="bi bi-plus-lg"></i></button></div></div></div>`; };
+/* Ảnh nền khi tin không có ảnh: đổi file images/placeholder-breaking-news.jpg là xong */
+const PH_HTML='<div class="feed-ph"></div>';
+const hostOf=u=>{ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return ''; } };
+/* Logo nhỏ của trang báo (favicon, lấy được cho bất kỳ báo nào); lỗi thì hiện chữ cái đầu */
+const siteLogo=u=>{ const h=hostOf(u); if(!h) return ''; return `<span class="feed-logo" title="${esc(h)}" data-ch="${esc(h[0].toUpperCase())}"><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(h)}&sz=64" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`; };
+/* Ảnh tin hoặc logo bị lỗi tải → thay bằng ảnh nền / chữ cái */
+document.addEventListener('error',e=>{
+  const im=e.target; if(!im||im.tagName!=='IMG') return;
+  if(im.closest('.feed-logo')){ const w=im.parentElement; im.remove(); w.textContent=w.dataset.ch||''; w.classList.add('txt'); }
+  else if(im.closest('.feed-media')) im.outerHTML=PH_HTML;
+},true);
+const card=it=>{ const sv=articles.some(a=>a.url===it.link); return `<div class="feed-card" data-u="${esc(it.link)}"><div class="feed-media">${it.img?`<img src="${esc(it.img)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:PH_HTML}${siteLogo(it.link)}</div><div class="p-2"><div class="feed-t">${esc(it.title)}</div><div class="small text-muted mt-1">${it.date?ago(it.date):''}${sv?` · <i class="bi bi-check2-circle text-success"></i> ${t('feedSaved')}`:''}</div><div class="d-flex gap-1 mt-2"><button class="btn btn-sm btn-outline-secondary flex-fill" data-fa="copy" title="${t('srcCopy')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-primary flex-fill" data-fa="save" title="${t('saveRead')}"><i class="bi bi-plus-lg"></i></button></div></div></div>`; };
 function paint(hosts){
   const box=$('#homeFeed'); if(!box) return;
   const all=hosts.flatMap(h=>HF[h]||[]), cnt={}; all.forEach(it=>it.tp.forEach(k=>{ cnt[k]=(cnt[k]||0)+1; }));

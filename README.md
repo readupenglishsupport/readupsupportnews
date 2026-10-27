@@ -9,6 +9,8 @@ index.html              # khung HTML
 manifest.webmanifest    # cấu hình PWA
 css/
   style.css             # toàn bộ style của app
+images/
+  placeholder-breaking-news.jpg  # ảnh nền cho tin không có ảnh (muốn đổi: thay file, giữ nguyên tên)
 js/
   theme-init.js         # chạy sớm trong <head>: áp theme + cỡ chữ đã lưu (tránh nháy)
   i18n.js               # từ điển Việt/Anh + hàm t()

@@ -75,7 +75,7 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
 .feed-card{flex:0 0 210px;background:var(--card);border-radius:12px;overflow:hidden;cursor:pointer;scroll-snap-align:start;transition:transform .18s ease,box-shadow .18s ease}
 .feed-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.18)}
 .feed-card img,.feed-ph{width:100%;height:110px;object-fit:cover;display:block}
-.feed-ph{display:flex;align-items:center;justify-content:center;background:var(--hover);font-size:2rem;color:var(--brand-t)}
+.feed-ph{display:block;background:var(--hover) url(../images/placeholder-breaking-news.jpg) center/cover no-repeat}
 .feed-t{font-size:.84rem;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .art{display:flex;align-items:flex-start;gap:4px}
 .art-t{flex:1;min-width:0;word-break:break-word}
@@ -99,3 +99,8 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
   .btn-action .btn-label{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0} /* ẩn chữ nhưng vẫn đọc được bằng screen reader */
   .btn-action i{font-size:1.15rem;line-height:1}
 }
+
+/* ----- ảnh bìa thẻ tin + logo báo ở góc ----- */
+.feed-media{position:relative}
+.feed-logo{position:absolute;left:8px;bottom:8px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:.75rem;font-weight:800;color:var(--brand)}
+.feed-card .feed-logo img{width:16px;height:16px;object-fit:contain;display:block}
