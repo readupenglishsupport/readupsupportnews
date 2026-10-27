@@ -92,6 +92,14 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
 .feed-card img,.feed-ph{width:100%;height:110px;object-fit:cover;display:block}
 .feed-ph{display:flex;align-items:center;justify-content:center;background:var(--hover);font-size:2rem;color:var(--brand-t)}
 .feed-t{font-size:.84rem;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.art{display:flex;align-items:flex-start;gap:4px}
+.art-t{flex:1;min-width:0;word-break:break-word}
+.art-more{flex:0 0 auto;border:0;background:none;color:inherit;opacity:.5;padding:0 5px;border-radius:6px;line-height:1.5;transition:opacity .15s ease,background-color .15s ease}
+.art:hover .art-more,.art-more:focus-visible{opacity:1}.art-more:hover{background:var(--hover)}
+@media(hover:none){.art-more{opacity:.8}}
+#artMenu{z-index:1700;width:240px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 12px 36px rgba(0,0,0,.3)}
+#artMenu .hm-a{display:flex;align-items:center;gap:8px;font-size:.88rem;padding:8px 10px;text-align:left}
+#artMenu .danger{color:#dc3545}
 </style>
 </head>
 <body>
@@ -178,6 +186,7 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
   <div class="modal-footer border-0"><button id="lkCopy" class="btn btn-sm btn-outline-secondary"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button id="lkInsert" class="btn btn-sm btn-primary"><i class="bi bi-journal-plus me-1"></i><span data-i18n="toNote"></span></button></div>
 </div></div></div>
 <div class="modal fade" id="instModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0"><div class="modal-header"><h6 class="modal-title fw-bold"><i class="bi bi-phone me-2"></i><span data-i18n="install"></span></h6><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body small" id="instBody"></div></div></div></div>
+<div id="artMenu" class="pop"></div>
 <div id="hlMenu" class="pop">
   <div id="hlNote" class="hm-note" style="display:none"></div><div class="hm-t" data-i18n="hlColor"></div><div id="hlColors"></div>
   <hr class="my-1"><div class="hm-g"><button class="hm-a" id="actCopy"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button><button class="hm-a" id="actLook"><i class="bi bi-translate me-1"></i><span data-i18n="lookupGo"></span></button></div>
@@ -214,7 +223,7 @@ confirm:'Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi 
 fetchFail:'Không tải được trang này. Hãy kiểm tra lại link hoặc thử bài khác (một số báo chặn đọc tự động / có paywall).',extractFail:'Không trích xuất được nội dung bài báo.',noFolderOpt:'Không thư mục (theo ngày)',source:'Nguồn',
 tip:'Bôi đen chữ cần học → chọn <b>màu highlight</b> → nhập ghi chú. Rê chuột vào chữ đã highlight để xem ghi chú, bấm vào để đổi màu, sửa ghi chú hoặc xóa.',delArt:'Xóa bài báo này? Bài báo cùng highlight và ghi chú sẽ bị xóa vĩnh viễn.',saveFail:'Lưu thất bại: ',pwDone:'Đã đổi mật khẩu.',
 noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
-c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại',sg:'Gợi ý từ',sgTopic:'Chủ đề',sgLevel:'Độ khó',lvl1:'Dễ',lvl2:'Vừa',lvl3:'Khó',sgPhrases:'Cụm từ nên học',sgWords:'Từ vựng đáng chú ý',sgNone:'Chưa có gợi ý phù hợp. Thử giảm độ khó nhé.',sgNF:'Không tìm thấy cụm này trong bài để highlight (có thể bị xen link).',sgAdded:'Đã highlight và thêm nghĩa vào ghi chú',feedTitle:'Bài mới từ nguồn bạn hay đọc',feedNone:'Chưa lấy được bài mới từ trang này (trang có thể không có RSS).',feedSaved:'Đã lưu',allT:'Tất cả',home:'Trang chủ',feedNoTopic:'Không có bài thuộc chủ đề này.',sgNoList:'Chưa tải được danh sách từ phổ biến nên gợi ý có thể chưa chính xác.',install:'Cài như app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Bấm nút <b>Chia sẻ</b> (hình vuông có mũi tên lên).</li><li>Chọn <b>Thêm vào Màn hình chính</b>.</li><li>Bấm <b>Thêm</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Cài đặt ứng dụng</b> hoặc <b>Thêm vào màn hình chính</b>.<div class="text-muted mt-2">Lần đầu mở bằng icon, bạn cần đăng nhập lại.</div>'},
+c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại',sg:'Gợi ý từ',sgTopic:'Chủ đề',sgLevel:'Độ khó',lvl1:'Dễ',lvl2:'Vừa',lvl3:'Khó',sgPhrases:'Cụm từ nên học',sgWords:'Từ vựng đáng chú ý',sgNone:'Chưa có gợi ý phù hợp. Thử giảm độ khó nhé.',sgNF:'Không tìm thấy cụm này trong bài để highlight (có thể bị xen link).',sgAdded:'Đã highlight và thêm nghĩa vào ghi chú',feedTitle:'Bài mới từ nguồn bạn hay đọc',feedNone:'Chưa lấy được bài mới từ trang này (trang có thể không có RSS).',feedSaved:'Đã lưu',copyLink:'Sao chép link bài',favAdd:'Thêm vào yêu thích',favRemove:'Bỏ yêu thích',moveTo:'Di chuyển vào thư mục',srcCopy:'Sao chép link bài gốc',srcCopied:'Đã sao chép link bài gốc',saveRead:'Lưu vào Readup',prevHint:'Thích bài này? Bấm ➕ trên thẻ để lưu.',allT:'Tất cả',home:'Trang chủ',feedNoTopic:'Không có bài thuộc chủ đề này.',sgNoList:'Chưa tải được danh sách từ phổ biến nên gợi ý có thể chưa chính xác.',install:'Cài như app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Bấm nút <b>Chia sẻ</b> (hình vuông có mũi tên lên).</li><li>Chọn <b>Thêm vào Màn hình chính</b>.</li><li>Bấm <b>Thêm</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Cài đặt ứng dụng</b> hoặc <b>Thêm vào màn hình chính</b>.<div class="text-muted mt-2">Lần đầu mở bằng icon, bạn cần đăng nhập lại.</div>'},
 en:{tag:'Read news, highlight and note new words',login:'Log in',signup:'Sign up',pass:'Password',pass2:'Confirm password',folders:'Folders',all:'By date (unfiled)',arts:'Articles',urlPh:'Paste an article link here…',read:'Read',
 emptyMain:'Paste an article link to start reading, or pick a saved article from your article list.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
 noFolders:'No folders yet.',noArts:'No articles yet.',today:'Today',yest:'Yesterday',enterCreds:'Please enter your email and password.',pw6:'Password must be at least 6 characters.',pwMis:'Passwords do not match.',
@@ -222,7 +231,7 @@ confirm:'Account created. Check your email to confirm, then log in.',delFolder:'
 fetchFail:"Couldn't load this page. Check the link or try another article (some sites block automatic reading or have a paywall).",extractFail:"Couldn't extract the article content.",noFolderOpt:'No folder (by date)',source:'Source',
 tip:'Select the words to learn → pick a <b>highlight color</b> → write a note. Hover a highlight to see its note; click it to change color, edit the note or remove it.',delArt:'Delete this article? It and its highlights and notes will be permanently removed.',saveFail:'Save failed: ',pwDone:'Password updated.',
 noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
-c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it',sg:'Word tips',sgTopic:'Topic',sgLevel:'Level',lvl1:'Easy',lvl2:'Medium',lvl3:'Hard',sgPhrases:'Phrases worth learning',sgWords:'Words worth noting',sgNone:'No suitable suggestions yet. Try a lower level.',sgNF:"Couldn't find this phrase in the text to highlight (it may span a link).",sgAdded:'Highlighted and added the meaning to the note',feedTitle:'Latest from sources you read',feedNone:"Couldn't load new articles from this site (it may not have RSS).",feedSaved:'Saved',allT:'All',home:'Home',feedNoTopic:'No articles on this topic.',sgNoList:"Couldn't load the common-word list, so suggestions may be less accurate.",install:'Install as app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Tap the <b>Share</b> button (square with an up arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Install app</b> or <b>Add to Home screen</b>.<div class="text-muted mt-2">Log in again the first time you open it from the icon.</div>'}};
+c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it',sg:'Word tips',sgTopic:'Topic',sgLevel:'Level',lvl1:'Easy',lvl2:'Medium',lvl3:'Hard',sgPhrases:'Phrases worth learning',sgWords:'Words worth noting',sgNone:'No suitable suggestions yet. Try a lower level.',sgNF:"Couldn't find this phrase in the text to highlight (it may span a link).",sgAdded:'Highlighted and added the meaning to the note',feedTitle:'Latest from sources you read',feedNone:"Couldn't load new articles from this site (it may not have RSS).",feedSaved:'Saved',copyLink:'Copy article link',favAdd:'Add to favorites',favRemove:'Remove from favorites',moveTo:'Move to folder',srcCopy:'Copy source link',srcCopied:'Source link copied',saveRead:'Save to Readup',prevHint:'Like it? Tap ➕ on the card to save.',allT:'All',home:'Home',feedNoTopic:'No articles on this topic.',sgNoList:"Couldn't load the common-word list, so suggestions may be less accurate.",install:'Install as app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Tap the <b>Share</b> button (square with an up arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Install app</b> or <b>Add to Home screen</b>.<div class="text-muted mt-2">Log in again the first time you open it from the icon.</div>'}};
 const t = k => I[lang][k] ?? k;
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
 const toolsHTML = () => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button>`;
@@ -318,7 +327,7 @@ function renderSide(){
   $('#navAll').classList.toggle('on',view==='all'); $('#navFav').classList.toggle('on',view==='fav');
   $('#folderList').innerHTML=folders.map(f=>`<div class="nav-item-x ${view===f.id?'on':''}" data-f="${f.id}"><i class="bi bi-folder2"></i><span>${esc(f.name)}</span><button class="x" data-del="${f.id}"><i class="bi bi-x-lg"></i></button></div>`).join('')||`<div class="small text-muted ms-1">${t('noFolders')}</div>`;
   let html='',last='';
-  articles.filter(a=>view==='fav'?a.favorite:view==='all'?!a.folder_id:a.folder_id===view).forEach(a=>{ const d=dayLabel(a.created_at); if(d!==last){html+=`<div class="day">${d}</div>`;last=d;} html+=`<div class="art ${cur&&cur.id===a.id?'on':''}" data-a="${a.id}">${a.favorite?'<i class="bi bi-star-fill text-warning me-1 small"></i>':''}${esc(a.title)}</div>`; });
+  articles.filter(a=>view==='fav'?a.favorite:view==='all'?!a.folder_id:a.folder_id===view).forEach(a=>{ const d=dayLabel(a.created_at); if(d!==last){html+=`<div class="day">${d}</div>`;last=d;} html+=`<div class="art ${cur&&cur.id===a.id?'on':''}" data-a="${a.id}"><span class="art-t">${a.favorite?'<i class="bi bi-star-fill text-warning me-1 small"></i>':''}${esc(a.title)}</span><button class="art-more" data-m="${a.id}" aria-label="Menu"><i class="bi bi-three-dots-vertical"></i></button></div>`; });
   $('#artList').innerHTML=html||`<div class="small text-muted ms-1">${t('noArts')}</div>`;
 }
 $('#navAll').onclick=()=>{view='all';renderSide();};
@@ -334,7 +343,7 @@ $('#addFolder').onclick=async()=>{
   const name=prompt(t('folderName')); if(!name||!name.trim()) return;
   const {error}=await sb.from('folders').insert({user_id:user.id,name:name.trim()}); if(error) return alert(error.message); loadData();
 };
-$('#artList').onclick=async e=>{
+$('#artList').onclick=async e=>{ const mb=e.target.closest('.art-more'); if(mb){ openArtMenu(mb.dataset.m,mb); return; }
   const a=e.target.closest('[data-a]'); if(!a) return;
   loader(true); const {data}=await sb.from('articles').select('*').eq('id',a.dataset.a).single(); loader(false); if(data){ closeSide(); openArticle(data); }
 };
@@ -415,7 +424,7 @@ function topicsOf(it){
   const tk=((it.title+' '+it.title+' '+(it.desc||'')+' '+(it.cats||[]).join(' ')).toLowerCase().match(/[a-z]+/g)||[]);
   return Object.entries(TOPIC).map(([k,v])=>{ const st=v.split(' '); return [k,tk.filter(w=>st.some(x=>w.startsWith(x))).length]; }).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
 }
-const card=it=>{ const sv=articles.some(a=>a.url===it.link); return `<div class="feed-card" data-u="${esc(it.link)}">${it.img?`<img src="${esc(it.img)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:'<div class="feed-ph"><i class="bi bi-newspaper"></i></div>'}<div class="p-2"><div class="feed-t">${esc(it.title)}</div><div class="small text-muted mt-1">${it.date?ago(it.date):''}${sv?` · <i class="bi bi-check2-circle text-success"></i> ${t('feedSaved')}`:''}</div></div></div>`; };
+const card=it=>{ const sv=articles.some(a=>a.url===it.link); return `<div class="feed-card" data-u="${esc(it.link)}">${it.img?`<img src="${esc(it.img)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:'<div class="feed-ph"><i class="bi bi-newspaper"></i></div>'}<div class="p-2"><div class="feed-t">${esc(it.title)}</div><div class="small text-muted mt-1">${it.date?ago(it.date):''}${sv?` · <i class="bi bi-check2-circle text-success"></i> ${t('feedSaved')}`:''}</div><div class="d-flex gap-1 mt-2"><button class="btn btn-sm btn-outline-secondary flex-fill" data-fa="copy" title="${t('srcCopy')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-primary flex-fill" data-fa="save" title="${t('saveRead')}"><i class="bi bi-plus-lg"></i></button></div></div></div>`; };
 function paint(hosts){
   const box=$('#homeFeed'); if(!box) return;
   const all=hosts.flatMap(h=>HF[h]||[]), cnt={}; all.forEach(it=>it.tp.forEach(k=>{ cnt[k]=(cnt[k]||0)+1; }));
@@ -439,7 +448,66 @@ async function renderHome(){
   $('#feedChips').onclick=e=>{ const b=e.target.closest('[data-tp]'); if(!b) return; homeTopic=b.dataset.tp; try{ localStorage.setItem('ft',homeTopic); }catch(_){} paint(hosts); };
   hosts.forEach(async h=>{ HF[h]=(await loadFeed(h)).map(it=>({...it,tp:topicsOf(it)})); paint(hosts); });
 }
-$('#readerBox').addEventListener('click',e=>{ const c=e.target.closest('.feed-card'); if(!c) return; $('#urlIn').value=c.dataset.u; $('#fetchBtn').click(); });
+
+/* ---------- Menu 3 chấm của từng bài ---------- */
+let menuArt=null;
+function artMenuMain(){
+  const a=menuArt;
+  $('#artMenu').innerHTML=`<button class="hm-a" data-act="fav"><i class="bi bi-star${a.favorite?'-fill':''} text-warning"></i>${t(a.favorite?'favRemove':'favAdd')}</button><button class="hm-a" data-act="link"><i class="bi bi-link-45deg"></i>${t('copyLink')}</button><button class="hm-a" data-act="move"><i class="bi bi-folder-symlink"></i>${t('moveTo')}<i class="bi bi-chevron-right ms-auto small"></i></button><hr class="my-1"><button class="hm-a danger" data-act="del"><i class="bi bi-trash"></i>${t('delOk')}</button>`;
+}
+function artMenuMove(){
+  const a=menuArt, opt=(id,lb,ic)=>`<button class="hm-a" data-mv="${id}"><i class="bi ${ic}"></i><span class="flex-grow-1 text-truncate">${esc(lb)}</span>${(a.folder_id||'')===id?'<i class="bi bi-check2 ms-auto"></i>':''}</button>`;
+  $('#artMenu').innerHTML=`<button class="hm-a" data-act="back"><i class="bi bi-chevron-left"></i>${t('moveTo')}</button><hr class="my-1"><div style="max-height:240px;overflow:auto">${opt('',t('noFolderOpt'),'bi-calendar3')}${folders.map(f=>opt(f.id,f.name,'bi-folder2')).join('')}</div>`;
+}
+function openArtMenu(id,btn){
+  const a=articles.find(x=>x.id===id); if(!a) return; menuArt=a; hideAll(); artMenuMain();
+  showPop($('#artMenu'),()=>rectsOf(btn),'below');
+}
+const rePlace=()=>{ const m=$('#artMenu'); place(m,m._get,m._pref); };
+$('#artMenu').addEventListener('click',async e=>{
+  const a=menuArt; if(!a) return; const mv=e.target.closest('[data-mv]'), b=e.target.closest('[data-act]');
+  if(mv){ hidePop($('#artMenu')); return moveArticle(a,mv.dataset.mv||null); }
+  if(!b) return; const act=b.dataset.act;
+  if(act==='move'){ artMenuMove(); return rePlace(); }
+  if(act==='back'){ artMenuMain(); return rePlace(); }
+  hidePop($('#artMenu'));
+  if(act==='fav') return favArticle(a);
+  if(act==='link') return copyArtLink(a);
+  if(act==='del') return delArticle(a);
+});
+document.addEventListener('pointerdown',e=>{ if(!e.target.closest('#artMenu,.art-more')) hidePop($('#artMenu')); },true);
+document.addEventListener('scroll',()=>hidePop($('#artMenu')),true);
+async function favArticle(a){
+  const v=!a.favorite; const {error}=await sb.from('articles').update({favorite:v}).eq('id',a.id); if(error) return alert(t('favSql'));
+  a.favorite=v; if(cur&&cur.id===a.id) cur.favorite=v; renderSide(); toast(t(v?'favOn':'favOff'));
+}
+async function copyArtLink(a){ const u=location.origin+location.pathname+'#a='+a.id; try{ await navigator.clipboard.writeText(u); toast(t('linkCopied')); }catch(e){ prompt('Link',u); } }
+async function moveArticle(a,to){
+  if((a.folder_id||null)===to) return; const f=folders.find(z=>z.id===to);
+  if(!await ask(f?t('moveQ').replace('{f}',f.name):t('moveOutQ'),t('moveOk'),false)) return;
+  const {error}=await sb.from('articles').update({folder_id:to}).eq('id',a.id); if(error) return alert(error.message);
+  const was=cur&&cur.id===a.id; await loadData(); if(was) showEmpty(); toast(f?t('moved').replace('{f}',f.name):t('movedOut'));
+}
+async function delArticle(a){
+  if(!await ask(t('delArt'),t('delOk'))) return;
+  const {error}=await sb.from('articles').delete().eq('id',a.id); if(error) return alert(error.message);
+  const was=cur&&cur.id===a.id; await loadData(); if(was) showEmpty(); toast(t('deleted'));
+}
+
+/* ---------- Xem trước bài mới trong cửa sổ riêng ---------- */
+function previewWin(u){
+  if(matchMedia('(pointer:coarse)').matches){ window.open(u,'_blank','noopener'); toast(t('prevHint')); return; }
+  const W=Math.min(1000,screen.availWidth-80), H=Math.min(820,screen.availHeight-80), L=Math.max(0,screen.availWidth-W-40);
+  const w=window.open('about:blank','readupPreview',`popup=yes,width=${W},height=${H},left=${L},top=40`);
+  if(!w){ window.open(u,'_blank','noopener'); return; }
+  try{ w.opener=null; }catch(e){} w.location.href=u; w.focus(); toast(t('prevHint'));
+}
+$('#readerBox').addEventListener('click',async e=>{
+  const c=e.target.closest('.feed-card'); if(!c) return; const u=c.dataset.u, fa=e.target.closest('[data-fa]');
+  if(fa&&fa.dataset.fa==='copy'){ try{ await navigator.clipboard.writeText(u); toast(t('srcCopied')); }catch(_){ prompt('Link',u); } return; }
+  if(fa&&fa.dataset.fa==='save'){ $('#urlIn').value=u; $('#fetchBtn').click(); return; }
+  previewWin(u);
+});
 
 /* ---------- Cỡ chữ ---------- */
 const fsGet=()=>parseFloat(lsGet('fs'))||1.08;
@@ -528,8 +596,8 @@ function openArticle(a,keep,restore){
     <div class="d-flex flex-wrap align-items-center gap-2 small text-muted mb-3">
       <a href="${esc(a.url)}" target="_blank" rel="noopener" class="text-decoration-none"><i class="bi bi-box-arrow-up-right me-1"></i>${t('source')}</a>
       <span>${new Date(a.created_at).toLocaleString(loc())}</span>
-      <div class="input-group input-group-sm ms-auto" style="width:auto"><select id="moveSel" class="form-select"><option value="">${t('noFolderOpt')}</option>${folders.map(f=>`<option value="${f.id}" ${a.folder_id===f.id?'selected':''}>${esc(f.name)}</option>`).join('')}</select><button class="btn btn-outline-primary" id="moveBtn"><i class="bi bi-folder-symlink me-1"></i>${t('moveBtn')}</button></div>
-      <div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" id="fsDn" title="A−">A−</button><button class="btn btn-outline-secondary" id="fsUp" title="A+">A+</button></div><button class="btn btn-sm btn-outline-primary" id="sgBtn"><i class="bi bi-lightbulb me-1"></i><span class="d-none d-sm-inline">${t('sg')}</span></button><button class="btn btn-sm btn-outline-warning" id="favBtn" title="${t('fav')}"><i class="bi bi-star${a.favorite?'-fill':''}"></i></button><button class="btn btn-sm btn-outline-secondary" id="linkBtn" title="${t('linkCopied')}"><i class="bi bi-link-45deg"></i></button><button class="btn btn-sm btn-outline-danger" id="delArt"><i class="bi bi-trash me-1"></i>${t('delBtn')}</button>
+      
+      <div class="btn-group btn-group-sm ms-auto"><button class="btn btn-outline-secondary" id="fsDn" title="A−">A−</button><button class="btn btn-outline-secondary" id="fsUp" title="A+">A+</button></div><button class="btn btn-sm btn-outline-primary" id="sgBtn"><i class="bi bi-lightbulb me-1"></i><span class="d-none d-sm-inline">${t('sg')}</span></button>
     </div>
     <div class="alert bg-body-tertiary border small py-2"><i class="bi bi-lightbulb text-warning me-1"></i>${t('tip')}</div><div class="collapse" id="sgBox"><div class="border rounded-3 p-2 mb-3" id="sgBody"></div></div></div>
     <div id="reader">${a.content}</div></div>${infoCard(a,keep)}`;
@@ -537,32 +605,14 @@ function openArticle(a,keep,restore){
   $('#sgBtn').onclick=()=>{ const bx=$('#sgBox'), c=bootstrap.Collapse.getOrCreateInstance(bx,{toggle:false}); if(bx.classList.contains('show')) c.hide(); else { c.show(); openSug(); } };
   $('#sgBody').addEventListener('click',e=>{ const row=e.target.closest('.sg-row'); if(!row) return; if(e.target.closest('[data-look]')){ lk.range=null; openLookup(row.dataset.t,null,'vi'); } const ad=e.target.closest('[data-add]'); if(ad&&!ad.disabled) addSug(row,ad); });
   $('#sgBody').addEventListener('change',e=>{ if(e.target.id==='sgLvl'){ try{ localStorage.setItem('sgl',e.target.value); }catch(_){} openSug(); } });
-  $('#favBtn').onclick=async()=>{
-    const v=!a.favorite; const {error}=await sb.from('articles').update({favorite:v}).eq('id',a.id); if(error) return alert(t('favSql'));
-    a.favorite=v; const x=articles.find(z=>z.id===a.id); if(x) x.favorite=v;
-    $('#favBtn i').className='bi bi-star'+(v?'-fill':''); renderSide(); toast(t(v?'favOn':'favOff'));
-  };
-  $('#linkBtn').onclick=async()=>{ const u=location.origin+location.pathname+'#a='+a.id; try{ await navigator.clipboard.writeText(u); toast(t('linkCopied')); }catch(e){ prompt('Link',u); } };
-  $('#moveBtn').onclick=async()=>{
-    const v=$('#moveSel').value||null; if(v===(a.folder_id||null)) return;
-    const f=folders.find(z=>z.id===v);
-    if(!await ask(f?t('moveQ').replace('{f}',f.name):t('moveOutQ'),t('moveOk'),false)) return;
-    const {error}=await sb.from('articles').update({folder_id:v}).eq('id',a.id); if(error) return alert(error.message);
-    cur=null; showEmpty(); await loadData(); toast(f?t('moved').replace('{f}',f.name):t('movedOut'));
-  };
-  $('#saveInfo').onclick=async()=>{
+    $('#saveInfo').onclick=async()=>{
     const meta={...(a.meta||{}),author:$('#iAu').value.trim(),published:$('#iDa').value.trim(),site:$('#iSi').value.trim()};
     const title=$('#iTi').value.trim()||a.title;
     const {error}=await sb.from('articles').update({title,meta}).eq('id',a.id); if(error) return alert(t('saveFail')+error.message);
     a.title=title; a.meta=meta; const x=articles.find(z=>z.id===a.id); if(x) x.title=title;
     $('#readerBox h1').textContent=title; renderSide(); toast(t('saved'));
   };
-  $('#delArt').onclick=async()=>{
-    if(!await ask(t('delArt'),t('delOk'))) return;
-    const {error}=await sb.from('articles').delete().eq('id',a.id); if(error) return alert(error.message);
-    cur=null; showEmpty(); await loadData(); toast(t('deleted'));
-  };
-  if(!keep){
+    if(!keep){
     const pos=restore?(+lsGet('pos:'+a.id)||0):0;
     if(restore&&pos) [0,500,1300].forEach(ms=>setTimeout(()=>{ if(cur&&cur.id===a.id&&Date.now()-lastOpen<1700&&Math.abs(scrollY-pos)>8) window.scrollTo(0,pos); },ms));
     else window.scrollTo({top:0,behavior:'smooth'});
@@ -577,7 +627,7 @@ async function saveArticle(){
 /* ---------- Highlight nhiều màu ---------- */
 const hidePop=el=>el.classList.remove('on');
 const hideMenu=()=>hidePop($('#hlMenu'));
-const hideAll=()=>{ hideMenu(); hidePop($('#editor')); hidePop($('#tip')); };
+const hideAll=()=>{ hideMenu(); hidePop($('#editor')); hidePop($('#tip')); hidePop($('#artMenu')); };
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 const canHover=matchMedia('(hover:hover)').matches;
 let down=false, inUI=false, uiT=null, selT=null, lastOpen=0, posT=null;
