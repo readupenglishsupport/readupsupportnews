@@ -86,6 +86,12 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
 .hm-note{font-size:.82rem;white-space:pre-wrap;background:var(--note);border:1px solid var(--note-b);border-radius:8px;padding:6px 8px;margin-bottom:8px;max-height:96px;overflow:auto}
 #favBtn i{color:#f5b301}
 #sgBody{max-height:340px;overflow:auto}
+.feed-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+.feed-card{flex:0 0 210px;background:var(--card);border-radius:12px;overflow:hidden;cursor:pointer;scroll-snap-align:start;transition:transform .18s ease,box-shadow .18s ease}
+.feed-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.18)}
+.feed-card img,.feed-ph{width:100%;height:110px;object-fit:cover;display:block}
+.feed-ph{display:flex;align-items:center;justify-content:center;background:var(--hover);font-size:2rem;color:var(--brand-t)}
+.feed-t{font-size:.84rem;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 </style>
 </head>
 <body>
@@ -208,7 +214,7 @@ confirm:'Đã tạo tài khoản. Hãy kiểm tra email để xác nhận rồi 
 fetchFail:'Không tải được trang này. Hãy kiểm tra lại link hoặc thử bài khác (một số báo chặn đọc tự động / có paywall).',extractFail:'Không trích xuất được nội dung bài báo.',noFolderOpt:'Không thư mục (theo ngày)',source:'Nguồn',
 tip:'Bôi đen chữ cần học → chọn <b>màu highlight</b> → nhập ghi chú. Rê chuột vào chữ đã highlight để xem ghi chú, bấm vào để đổi màu, sửa ghi chú hoặc xóa.',delArt:'Xóa bài báo này? Bài báo cùng highlight và ghi chú sẽ bị xóa vĩnh viễn.',saveFail:'Lưu thất bại: ',pwDone:'Đã đổi mật khẩu.',
 noteTitle:'Ghi chú cho từ này',notePh:'Dán nghĩa, ví dụ, phiên âm…',save:'Lưu',close:'Đóng',hlColor:'Màu highlight',note:'Ghi chú',removeHl:'Xóa highlight',clearAll:'Xóa tất cả highlight',clearQ:'Xóa toàn bộ highlight và ghi chú của bài này?',
-c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại',sg:'Gợi ý từ',sgTopic:'Chủ đề',sgLevel:'Độ khó',lvl1:'Dễ',lvl2:'Vừa',lvl3:'Khó',sgPhrases:'Cụm từ nên học',sgWords:'Từ vựng đáng chú ý',sgNone:'Chưa có gợi ý phù hợp. Thử giảm độ khó nhé.',sgNF:'Không tìm thấy cụm này trong bài để highlight (có thể bị xen link).',sgAdded:'Đã highlight và thêm nghĩa vào ghi chú',sgNoList:'Chưa tải được danh sách từ phổ biến nên gợi ý có thể chưa chính xác.',install:'Cài như app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Bấm nút <b>Chia sẻ</b> (hình vuông có mũi tên lên).</li><li>Chọn <b>Thêm vào Màn hình chính</b>.</li><li>Bấm <b>Thêm</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Cài đặt ứng dụng</b> hoặc <b>Thêm vào màn hình chính</b>.<div class="text-muted mt-2">Lần đầu mở bằng icon, bạn cần đăng nhập lại.</div>'},
+c_yellow:'Vàng',c_green:'Xanh lá',c_blue:'Xanh dương',c_pink:'Hồng',c_orange:'Cam',c_purple:'Tím',cancel:'Hủy',delOk:'Xóa',delBtn:'Xóa bài',moveBtn:'Chuyển',moveOk:'Chuyển',moveQ:'Chuyển bài báo này vào thư mục "{f}"? Bài sẽ không còn hiển thị ở mục theo ngày.',moveOutQ:'Đưa bài báo này ra khỏi thư mục và xếp lại theo ngày?',moved:'Đã chuyển vào thư mục "{f}"',movedOut:'Đã đưa bài về mục theo ngày',deleted:'Đã xóa bài báo',infoTitle:'Thông tin bài báo',iTitle:'Tên bài báo',iAuthor:'Tác giả',iDate:'Ngày đăng',iSite:'Trang báo',iLink:'Đường dẫn',iSaved:'Ngày lưu',iFolder:'Thư mục',iWords:'Độ dài',words:'từ',min:'phút đọc',saveInfo:'Lưu thông tin',saved:'Đã lưu thông tin',manage:'Quản lý bài báo',lookup:'Tra cứu / Dịch',lookupGo:'Tra cứu',copy:'Sao chép',toNote:'Chèn vào ghi chú',noteAdded:'Đã chèn vào ghi chú',copied:'Đã sao chép',lkFail:'Chưa dịch được lúc này. Bạn thử bấm các link bên dưới nhé.',lkWait:'Đang tra cứu…',lkNoDict:'Không có định nghĩa Anh–Anh miễn phí cho mục này. Hãy dùng các link từ điển bên dưới.',lkTrans:'Nghĩa / bản dịch',lkDef:'Định nghĩa (Anh–Anh)',fav:'Yêu thích',favOn:'Đã thêm vào yêu thích',favOff:'Đã bỏ khỏi yêu thích',favSql:'Chưa lưu được. Hãy chạy lệnh SQL thêm cột favorite trong Supabase (xem hướng dẫn).',linkCopied:'Đã sao chép link bài báo',dupOpen:'Bài này đã được lưu trước đó, mình đã mở lại',sg:'Gợi ý từ',sgTopic:'Chủ đề',sgLevel:'Độ khó',lvl1:'Dễ',lvl2:'Vừa',lvl3:'Khó',sgPhrases:'Cụm từ nên học',sgWords:'Từ vựng đáng chú ý',sgNone:'Chưa có gợi ý phù hợp. Thử giảm độ khó nhé.',sgNF:'Không tìm thấy cụm này trong bài để highlight (có thể bị xen link).',sgAdded:'Đã highlight và thêm nghĩa vào ghi chú',feedTitle:'Bài mới từ nguồn bạn hay đọc',feedNone:'Chưa lấy được bài mới từ trang này (trang có thể không có RSS).',feedSaved:'Đã lưu',allT:'Tất cả',feedNoTopic:'Không có bài thuộc chủ đề này.',sgNoList:'Chưa tải được danh sách từ phổ biến nên gợi ý có thể chưa chính xác.',install:'Cài như app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Bấm nút <b>Chia sẻ</b> (hình vuông có mũi tên lên).</li><li>Chọn <b>Thêm vào Màn hình chính</b>.</li><li>Bấm <b>Thêm</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Cài đặt ứng dụng</b> hoặc <b>Thêm vào màn hình chính</b>.<div class="text-muted mt-2">Lần đầu mở bằng icon, bạn cần đăng nhập lại.</div>'},
 en:{tag:'Read news, highlight and note new words',login:'Log in',signup:'Sign up',pass:'Password',pass2:'Confirm password',folders:'Folders',all:'By date (unfiled)',arts:'Articles',urlPh:'Paste an article link here…',read:'Read',
 emptyMain:'Paste an article link to start reading, or pick a saved article from your article list.',chpw:'Change password',logout:'Log out',npw:'New password',npw2:'Confirm new password',savepw:'Save password',
 noFolders:'No folders yet.',noArts:'No articles yet.',today:'Today',yest:'Yesterday',enterCreds:'Please enter your email and password.',pw6:'Password must be at least 6 characters.',pwMis:'Passwords do not match.',
@@ -216,7 +222,7 @@ confirm:'Account created. Check your email to confirm, then log in.',delFolder:'
 fetchFail:"Couldn't load this page. Check the link or try another article (some sites block automatic reading or have a paywall).",extractFail:"Couldn't extract the article content.",noFolderOpt:'No folder (by date)',source:'Source',
 tip:'Select the words to learn → pick a <b>highlight color</b> → write a note. Hover a highlight to see its note; click it to change color, edit the note or remove it.',delArt:'Delete this article? It and its highlights and notes will be permanently removed.',saveFail:'Save failed: ',pwDone:'Password updated.',
 noteTitle:'Note for this word',notePh:'Paste meaning, example, pronunciation…',save:'Save',close:'Close',hlColor:'Highlight color',note:'Note',removeHl:'Remove highlight',clearAll:'Clear all highlights',clearQ:'Remove all highlights and notes in this article?',
-c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it',sg:'Word tips',sgTopic:'Topic',sgLevel:'Level',lvl1:'Easy',lvl2:'Medium',lvl3:'Hard',sgPhrases:'Phrases worth learning',sgWords:'Words worth noting',sgNone:'No suitable suggestions yet. Try a lower level.',sgNF:"Couldn't find this phrase in the text to highlight (it may span a link).",sgAdded:'Highlighted and added the meaning to the note',sgNoList:"Couldn't load the common-word list, so suggestions may be less accurate.",install:'Install as app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Tap the <b>Share</b> button (square with an up arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Install app</b> or <b>Add to Home screen</b>.<div class="text-muted mt-2">Log in again the first time you open it from the icon.</div>'}};
+c_yellow:'Yellow',c_green:'Green',c_blue:'Blue',c_pink:'Pink',c_orange:'Orange',c_purple:'Purple',cancel:'Cancel',delOk:'Delete',delBtn:'Delete',moveBtn:'Move',moveOk:'Move',moveQ:'Move this article to the folder "{f}"? It will no longer appear in the by-date list.',moveOutQ:'Take this article out of its folder and group it by date again?',moved:'Moved to folder "{f}"',movedOut:'Moved back to the by-date list',deleted:'Article deleted',infoTitle:'Article information',iTitle:'Title',iAuthor:'Author',iDate:'Published',iSite:'Publisher',iLink:'Link',iSaved:'Saved on',iFolder:'Folder',iWords:'Length',words:'words',min:'min read',saveInfo:'Save information',saved:'Information saved',manage:'My articles',lookup:'Look up / Translate',lookupGo:'Look up',copy:'Copy',toNote:'Add to note',noteAdded:'Added to note',copied:'Copied',lkFail:"Couldn't translate right now. Try the links below.",lkWait:'Looking up…',lkNoDict:'No free English definition for this entry. Use the dictionary links below.',lkTrans:'Meaning / translation',lkDef:'Definition (English)',fav:'Favorites',favOn:'Added to favorites',favOff:'Removed from favorites',favSql:'Could not save. Run the SQL to add the favorite column in Supabase.',linkCopied:'Article link copied',dupOpen:'Already saved earlier — opened it',sg:'Word tips',sgTopic:'Topic',sgLevel:'Level',lvl1:'Easy',lvl2:'Medium',lvl3:'Hard',sgPhrases:'Phrases worth learning',sgWords:'Words worth noting',sgNone:'No suitable suggestions yet. Try a lower level.',sgNF:"Couldn't find this phrase in the text to highlight (it may span a link).",sgAdded:'Highlighted and added the meaning to the note',feedTitle:'Latest from sources you read',feedNone:"Couldn't load new articles from this site (it may not have RSS).",feedSaved:'Saved',allT:'All',feedNoTopic:'No articles on this topic.',sgNoList:"Couldn't load the common-word list, so suggestions may be less accurate.",install:'Install as app',installSteps:'<b>iPhone (Safari):</b><ol class="mb-2"><li>Tap the <b>Share</b> button (square with an up arrow).</li><li>Choose <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol><b>Android (Chrome):</b> menu ⋮ → <b>Install app</b> or <b>Add to Home screen</b>.<div class="text-muted mt-2">Log in again the first time you open it from the icon.</div>'}};
 const t = k => I[lang][k] ?? k;
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
 const toolsHTML = () => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button>`;
@@ -249,9 +255,9 @@ const loader = on => $('#loader').classList.toggle('hide', !on);
 const alertBox = (el,msg,type='danger') => $(el).innerHTML = msg ? `<div class="alert alert-${type} py-2 small">${msg}</div>` : '';
 const loc = () => lang==='vi'?'vi-VN':'en-GB';
 function showEmpty(keep){
-  $('#readerBox').innerHTML=`<div class="reader-card vfade text-center text-muted py-5"><i class="bi bi-book fs-1 text-danger"></i><p class="mt-2 mb-0">${t('emptyMain')}</p></div>`;
+  $('#readerBox').innerHTML=`<div class="reader-card vfade text-center text-muted py-5"><i class="bi bi-book fs-1 text-danger"></i><p class="mt-2 mb-0">${t('emptyMain')}</p></div><div id="homeFeed" class="mt-3"></div>`;
   document.title='Readup Support News';
-  if(!keep){ cur=null; try{ history.replaceState(null,'',location.pathname+location.search); localStorage.removeItem('last'); }catch(e){} }
+  if(!keep){ cur=null; try{ history.replaceState(null,'',location.pathname+location.search); localStorage.removeItem('last'); }catch(e){} if(user) renderHome(); }
 }
 
 /* ---------- Đăng nhập / đăng ký ---------- */
@@ -286,7 +292,7 @@ async function boot(session){
   user=session.user; $('#uMail').textContent=user.email;
   $('#authView').style.display='none'; $('#appView').style.display='block';
   const want=(location.hash.match(/#a=([\w-]+)/)||[])[1]||lsGet('last');
-  showEmpty(true); await loadData(); if(want) await restoreArticle(want); loader(false);
+  showEmpty(true); await loadData(); if(want) await restoreArticle(want); if(!cur) renderHome(); loader(false);
 }
 applyTheme(); applyLang();
 async function restoreArticle(id){
@@ -367,6 +373,72 @@ $('#fetchBtn').onclick=async()=>{
 $('#urlIn').addEventListener('keydown',e=>e.key==='Enter'&&$('#fetchBtn').click());
 
 /* ---------- Trình đọc ---------- */
+/* ---------- Bài mới từ nguồn hay đọc (RSS) ---------- */
+const FEEDS={'bbc.com':'https://feeds.bbci.co.uk/news/rss.xml','bbc.co.uk':'https://feeds.bbci.co.uk/news/rss.xml','theguardian.com':'https://www.theguardian.com/international/rss','nytimes.com':'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml','npr.org':'https://feeds.npr.org/1001/rss.xml','aljazeera.com':'https://www.aljazeera.com/xml/rss/all.xml','theconversation.com':'https://theconversation.com/global/articles.atom','cnn.com':'http://rss.cnn.com/rss/edition.rss','e.vnexpress.net':'https://e.vnexpress.net/rss/news.rss'};
+async function findFeed(h){
+  const k=Object.keys(FEEDS).find(x=>h===x||h.endsWith('.'+x)); if(k) return FEEDS[k];
+  try{ const d=new DOMParser().parseFromString(await getHTML('https://'+h+'/'),'text/html'); const l=d.querySelector('link[rel="alternate"][type*="rss"],link[rel="alternate"][type*="atom"]'), hr=l&&l.getAttribute('href'); if(hr) return new URL(hr,'https://'+h+'/').href; }catch(e){}
+  for(const p of ['/feed','/rss','/rss.xml','/feed.xml']){ try{ const x=await getHTML('https://'+h+p); if(/<(rss|feed)[\s>]/i.test(x)) return 'https://'+h+p; }catch(e){} }
+  return null;
+}
+function parseFeed(xml){
+  const d=new DOMParser().parseFromString(xml,'text/xml'); if(d.querySelector('parsererror')) return [];
+  return [...d.querySelectorAll('item,entry')].slice(0,8).map(n=>{
+    const tx=nm=>{ const e=n.getElementsByTagName(nm)[0]; return e?e.textContent.trim():''; };
+    let link=''; for(const e of n.getElementsByTagName('link')){ const x=e.textContent.trim()||(e.getAttribute('rel')!=='self'&&e.getAttribute('href'))||''; if(x){ link=x; break; } }
+    const ns=(nm,at)=>{ const e=[...n.getElementsByTagNameNS('*',nm)].find(x=>x.getAttribute(at)); return e?e.getAttribute(at):''; };
+    let img=ns('thumbnail','url')||ns('content','url')||(()=>{ const en=[...n.getElementsByTagName('enclosure')].find(x=>/image/.test(x.getAttribute('type')||'')); return en?en.getAttribute('url'):''; })();
+    if(!img){ const m=(n.textContent||'').match(/<img[^>]+src=["']([^"']+)/i); if(m) img=m[1]; }
+    const desc=(tx('description')||tx('summary')||tx('content')).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').slice(0,300);
+    const cats=[...n.getElementsByTagName('category')].map(c=>c.textContent.trim()||c.getAttribute('term')||'').filter(Boolean).slice(0,5);
+    return {title:tx('title'),link,img:(img||'').replace(/^http:/,'https:'),date:Date.parse(tx('pubDate')||tx('published')||tx('updated'))||0,desc,cats};
+  }).filter(x=>x.title&&/^https?:/.test(x.link));
+}
+async function loadFeed(h){
+  try{ const c=JSON.parse(lsGet('fj:'+h)||'null'); if(c&&Date.now()-c.ts<18e5) return c.items; }catch(e){}
+  try{
+    let fu=lsGet('fu:'+h); if(!fu){ fu=await findFeed(h); if(fu){ try{ localStorage.setItem('fu:'+h,fu); }catch(e){} } }
+    if(!fu) return [];
+    const items=parseFeed(await getHTML(fu));
+    if(items.length){ try{ localStorage.setItem('fj:'+h,JSON.stringify({ts:Date.now(),items})); }catch(e){} }
+    return items;
+  }catch(e){ return []; }
+}
+function ago(ts){
+  const m=Math.max(1,Math.round((Date.now()-ts)/6e4)), r=new Intl.RelativeTimeFormat(loc(),{numeric:'auto'});
+  return m<60?r.format(-m,'minute'):m<1440?r.format(-Math.round(m/60),'hour'):r.format(-Math.round(m/1440),'day');
+}
+let homeTopic=lsGet('ft')||'all', HF={};
+function topicsOf(it){
+  const tk=((it.title+' '+it.title+' '+(it.desc||'')+' '+(it.cats||[]).join(' ')).toLowerCase().match(/[a-z]+/g)||[]);
+  return Object.entries(TOPIC).map(([k,v])=>{ const st=v.split(' '); return [k,tk.filter(w=>st.some(x=>w.startsWith(x))).length]; }).filter(x=>x[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+}
+const card=it=>{ const sv=articles.some(a=>a.url===it.link); return `<div class="feed-card" data-u="${esc(it.link)}">${it.img?`<img src="${esc(it.img)}" loading="lazy" referrerpolicy="no-referrer" alt="">`:'<div class="feed-ph"><i class="bi bi-newspaper"></i></div>'}<div class="p-2"><div class="feed-t">${esc(it.title)}</div><div class="small text-muted mt-1">${it.date?ago(it.date):''}${sv?` · <i class="bi bi-check2-circle text-success"></i> ${t('feedSaved')}`:''}</div></div></div>`; };
+function paint(hosts){
+  const box=$('#homeFeed'); if(!box) return;
+  const all=hosts.flatMap(h=>HF[h]||[]), cnt={}; all.forEach(it=>it.tp.forEach(k=>{ cnt[k]=(cnt[k]||0)+1; }));
+  const ks=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]); if(homeTopic!=='all'&&!cnt[homeTopic]) homeTopic='all';
+  const chip=(k,lb,n)=>`<button class="btn btn-sm rounded-pill ${homeTopic===k?'btn-primary':'btn-outline-secondary'}" data-tp="${k}">${lb} <span class="opacity-75">${n}</span></button>`;
+  $('#feedChips').innerHTML=all.length?chip('all',t('allT'),all.length)+ks.map(k=>chip(k,TL[lang][k],cnt[k])).join(''):'';
+  hosts.forEach(h=>{
+    const el=box.querySelector(`[data-h="${CSS.escape(h)}"] .feed-row`); if(!el||HF[h]===undefined) return;
+    const its=HF[h].filter(it=>homeTopic==='all'||it.tp.includes(homeTopic));
+    el.innerHTML=its.length?its.map(card).join(''):`<div class="small text-muted">${t(HF[h].length?'feedNoTopic':'feedNone')}</div>`;
+  });
+}
+async function renderHome(){
+  const box=$('#homeFeed'); if(!box||!user) return;
+  const hosts=[]; for(const a of articles){ try{ const h=new URL(a.url).hostname.replace(/^www\./,''); if(!hosts.includes(h)) hosts.push(h); }catch(e){} if(hosts.length>=3) break; }
+  if(!hosts.length){ box.innerHTML=''; return; }
+  HF={};
+  box.innerHTML=`<div class="d-flex align-items-center mb-2"><h6 class="fw-bold mb-0"><i class="bi bi-rss me-2" style="color:var(--brand-t)"></i>${t('feedTitle')}</h6><button class="btn btn-sm btn-outline-secondary ms-auto" id="feedRef"><i class="bi bi-arrow-clockwise"></i></button></div><div id="feedChips" class="d-flex gap-2 mb-3" style="overflow-x:auto;white-space:nowrap"></div>`
+    +hosts.map(h=>`<div class="mb-3" data-h="${esc(h)}"><div class="small fw-semibold text-muted mb-1">${esc(h)}</div><div class="feed-row"><div class="text-muted small"><span class="spinner-border spinner-border-sm me-2"></span>${t('lkWait')}</div></div></div>`).join('');
+  $('#feedRef').onclick=()=>{ hosts.forEach(h=>{ try{ localStorage.removeItem('fj:'+h); }catch(e){} }); renderHome(); };
+  $('#feedChips').onclick=e=>{ const b=e.target.closest('[data-tp]'); if(!b) return; homeTopic=b.dataset.tp; try{ localStorage.setItem('ft',homeTopic); }catch(_){} paint(hosts); };
+  hosts.forEach(async h=>{ HF[h]=(await loadFeed(h)).map(it=>({...it,tp:topicsOf(it)})); paint(hosts); });
+}
+$('#readerBox').addEventListener('click',e=>{ const c=e.target.closest('.feed-card'); if(!c) return; $('#urlIn').value=c.dataset.u; $('#fetchBtn').click(); });
+
 /* ---------- Cỡ chữ ---------- */
 const fsGet=()=>parseFloat(lsGet('fs'))||1.08;
 function fsSet(v){ v=Math.round(Math.min(1.8,Math.max(.85,v))*100)/100; document.documentElement.style.setProperty('--rf',v+'rem'); try{ localStorage.setItem('fs',v); }catch(e){} hideAll(); }
@@ -374,8 +446,8 @@ $('#instBtn').onclick=()=>{ $('#instBody').innerHTML=t('installSteps'); bootstra
 
 /* ---------- Gợi ý từ / cụm từ (miễn phí, chạy ngay trong trình duyệt) ---------- */
 const STOPS=new Set('the be to of and a in that have i it for not on with he as you do at this but his by from they we say her she or an will my one all would there their what so up out if about who get which go me when make can like time no just him know take people into year your good some could them see other than then now look only come its over think also back after use two how our work first well way even new want because any these give day most us is are was were been has had did does said made since while during until within without between against among across before under although though whether however therefore already still very much many more such each both several every wider fallen'.split(' '));
-const TOPIC={edu:'school pupil student teacher education curriculum exam universit classroom lesson tuition learning',eco:'econom market inflation tax bank growth trade business invest price profit budget debt wage',pol:'government minister election parliament policy party vote council mayor campaign president reform',health:'health hospital patient disease doctor treatment mental medical drug surgery symptom',tech:'technolog software digital data internet computer robot online cyber algorithm device',env:'climate energy carbon pollution wildlife emission renewable environment species forest fossil warming',sci:'research scientist study experiment discover evidence theory laborator',law:'police court crime trial prison judge arrest lawyer sentence'};
-const TL={vi:{edu:'Giáo dục',eco:'Kinh tế',pol:'Chính trị',health:'Sức khỏe',tech:'Công nghệ',env:'Môi trường',sci:'Khoa học',law:'Pháp luật'},en:{edu:'Education',eco:'Economy',pol:'Politics',health:'Health',tech:'Technology',env:'Environment',sci:'Science',law:'Law & crime'}};
+const TOPIC={edu:'school pupil student teacher education curriculum exam universit classroom lesson tuition learning',eco:'econom market inflation tax bank growth trade business invest price profit budget debt wage',pol:'government minister election parliament policy party vote council mayor campaign president reform',health:'health hospital patient disease doctor treatment mental medical drug surgery symptom',tech:'technolog software digital data internet computer robot online cyber algorithm device',env:'climate energy carbon pollution wildlife emission renewable environment species forest fossil warming',sci:'research scientist study experiment discover evidence theory laborator',law:'police court crime trial prison judge arrest lawyer sentence',sport:'football soccer team player season tournament league coach olympic championship match',culture:'film movie music album actor artist festival book theatre celebrity series singer'};
+const TL={vi:{edu:'Giáo dục',eco:'Kinh tế',pol:'Chính trị',health:'Sức khỏe',tech:'Công nghệ',env:'Môi trường',sci:'Khoa học',law:'Pháp luật',sport:'Thể thao',culture:'Văn hóa'},en:{edu:'Education',eco:'Economy',pol:'Politics',health:'Health',tech:'Technology',env:'Environment',sci:'Science',law:'Law & crime',sport:'Sport',culture:'Culture'}};
 const PART=new Set(['up','down','out','off','over','back','away','through','around','apart','into']);
 const VERB=/^(set|put|take|took|taken|give|gave|come|came|go|went|get|got|turn|bring|brought|carry|carried|break|broke|look|run|ran|pick|pull|hold|held|keep|kept|make|made|clos|shut|cut|point|work|find|found|step|stand|move|roll|call|hand|build|built|fall|fell|pass|show|sign|pay|paid|sort|sell|sold|speak|spoke|throw|threw|try|tried|wind|wipe)(e|es|s|ed|d|ing)?$/;
 let FREQ=null;
