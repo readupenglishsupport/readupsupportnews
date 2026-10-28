@@ -47,7 +47,7 @@ async function openPdf(a,keep,restore){
     <div class="small text-muted mb-2"><i class="bi bi-lightbulb text-warning me-1"></i><span data-i18n="pdfHint">${t('pdfHint')}</span></div>
     <div id="reader" class="pdf-reader"><div class="text-center text-muted py-5"><span class="spinner-border spinner-border-sm me-2"></span>${t('pdfLoading')}</div></div>
     <div id="pdfBadge" class="pdf-badge"><input id="pdfPg" inputmode="numeric" aria-label="${t('pdfPage')}"> / <span id="pdfTot">–</span></div></div>`;
-  pdfWire(); pdfZoomLabel();
+  pdfWire(); pdfZoomLabel(); pdfFabMake();
   try{
     await loadPdfJs();
     const {data,error}=await sb.storage.from(PDF_BUCKET).createSignedUrl(a.url.slice(4),21600); if(error) throw error;
@@ -63,7 +63,7 @@ function pdfLabels(){ document.querySelectorAll('#pdfWrap [data-i18n-title]').fo
 function pdfTeardown(){
   if(P.saveT){ clearTimeout(P.saveT); P.saveT=0; if(isPdf()) pdfSave(); }
   P.seq++; if(P.obs){ P.obs.disconnect(); P.obs=null; } if(P.doc){ try{ P.doc.destroy(); }catch(e){} P.doc=null; }
-  P.id=null; P.addMode=false; document.body.classList.remove('pdf-adding');
+  P.id=null; P.addMode=false; document.body.classList.remove('pdf-adding'); pdfFabKill();
 }
 
 /* ---------- Dựng trang (chỉ vẽ trang đang xem) ---------- */
@@ -128,7 +128,20 @@ function pdfWire(){
   $('#pdfAdd').onclick=()=>pdfAddMode(!P.addMode);
   $('#pdfDl').onclick=async()=>{ const {data,error}=await sb.storage.from(PDF_BUCKET).createSignedUrl(cur.url.slice(4),120,{download:(cur.title||'file')+'.pdf'}); if(error) return alert(pdfErr(error)); const a=document.createElement('a'); a.href=data.signedUrl; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); };
 }
-function pdfAddMode(on){ P.addMode=on; document.body.classList.toggle('pdf-adding',on); const b=$('#pdfAdd'); if(b){ b.classList.toggle('btn-primary',on); b.classList.toggle('btn-outline-primary',!on); } if(on) hideAll(); }
+function pdfAddMode(on){
+  P.addMode=on; document.body.classList.toggle('pdf-adding',on);
+  const b=$('#pdfAdd'); if(b){ b.classList.toggle('btn-primary',on); b.classList.toggle('btn-outline-primary',!on); }
+  const f=$('#pdfFab'); if(f) f.classList.toggle('on',on);
+  if(on) hideAll();
+}
+/* Khi thanh công cụ trượt khỏi màn hình → hiện nút tròn "Thêm chữ" nổi ở góc */
+function pdfFabMake(){
+  pdfFabKill();
+  const f=document.createElement('button'); f.id='pdfFab'; f.className='pdf-fab'; f.title=t('pdfAddText'); f.setAttribute('aria-label',t('pdfAddText'));
+  f.innerHTML='<i class="bi bi-fonts"></i>'; f.onclick=()=>pdfAddMode(!P.addMode); document.body.appendChild(f);
+  const src=$('#pdfAdd'); if(src&&window.IntersectionObserver){ P.fabObs=new IntersectionObserver(es=>f.classList.toggle('show',!es[0].isIntersecting),{rootMargin:'-64px 0px 0px 0px'}); P.fabObs.observe(src); }
+}
+function pdfFabKill(){ if(P.fabObs){ P.fabObs.disconnect(); P.fabObs=null; } const f=$('#pdfFab'); if(f) f.remove(); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&P.addMode) pdfAddMode(false); });
 
 /* ---------- Highlight (dùng lại bảng màu / tra từ / ghi chú của web) ---------- */
@@ -234,8 +247,8 @@ function txRemove(id){ P.tx=P.tx.filter(z=>z.id!==id); document.querySelectorAll
 document.addEventListener('pointerdown',e=>{
   if(!isPdf()||!P.addMode) return; const lay=e.target.classList&&e.target.classList.contains('pdf-txlayer')?e.target:null; if(!lay) return;
   e.preventDefault(); const page=lay.parentElement, b=page.getBoundingClientRect(), n=+page.dataset.n;
-  const x={id:'t'+Date.now().toString(36),p:n,x:Math.min(.9,(e.clientX-b.left)/b.width),y:Math.min(.97,Math.max(0,(e.clientY-b.top)/b.height-.01)),s:Math.max(.008,Math.min(.05,16/b.width*(1/P.zoom)*P.zoom)),c:TX_COLORS[0],t:''};
-  P.tx.push(x); const el=txEl(x,page); lay.appendChild(el); pdfAddMode(false); setTimeout(()=>el.querySelector('.pdf-tx-t').focus(),0);
+  const x={id:'t'+Date.now().toString(36),p:n,x:Math.min(.9,(e.clientX-b.left)/b.width),y:Math.min(.97,Math.max(0,(e.clientY-b.top-11)/b.height)),s:Math.max(.008,Math.min(.05,16/b.width*(1/P.zoom)*P.zoom)),c:TX_COLORS[0],t:''};
+  P.tx.push(x); const el=txEl(x,page); lay.appendChild(el); setTimeout(()=>el.querySelector('.pdf-tx-t').focus(),0);
 },true);
 
 /* ---------- Lưu ---------- */
