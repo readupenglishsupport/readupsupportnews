@@ -15,7 +15,7 @@ supabase/
   pdf-setup.sql         # chạy 1 lần trong Supabase để bật kho lưu PDF
 images/
   placeholder-breaking-news.jpg  # ảnh nền cho tin không có ảnh (muốn đổi: thay file, giữ nguyên tên)
-  new-screen.png                 # ảnh popup thông báo (xem mục "Thông báo" bên dưới)
+  new-screen.png, new-screen-1.png, ...  # ảnh thông báo (xem mục "Thông báo" bên dưới)
 js/
   theme-init.js         # chạy sớm trong <head>: áp theme + cỡ chữ đã lưu (tránh nháy)
   i18n.js               # từ điển Việt/Anh + hàm t()
@@ -23,10 +23,10 @@ js/
   feed-home.js          # trang chủ: feed nhiều nguồn, chủ đề Logistics / Supply chain
   article-fetch.js      # nút Paste + tải bài báo với nhiều lớp dự phòng (proxy, archive, jina)
   sidebar-active.js     # tô đỏ đúng mục đang ở trong menu trái
-  tools.js              # mục "Tiện ích" (sau Yêu thích): trang tiện ích, upload / danh sách / xóa PDF
+  tools.js              # mục "Tiện ích" (sau Yêu thích): thẻ Đọc & ghi chú PDF, thẻ hướng dẫn nén PDF > 50MB (iLovePDF), upload / danh sách / xóa PDF
   pdf-reader.js         # trình đọc PDF: bôi đen tra từ, highlight, ghi chú, thêm chữ lên trang
   pdf-bookmarks.js      # PDF: dấu trang (nút tròn góc trái trên) + ô "Đi đến trang"
-  announce.js           # popup thông báo khi mở web (ảnh images/new-screen.png)
+  announce.js           # popup thông báo + chuông (ảnh images/new-screen*.png)
 ```
 
 ## Bật tính năng PDF (làm 1 lần)
@@ -42,13 +42,14 @@ file PDF gốc không bị sửa.
 > Thứ tự nạp script trong `index.html` quan trọng: `i18n.js` → `app.js` → các file còn lại
 > (các file sau ghi đè/mở rộng hàm của `app.js`).
 
-## Thông báo (popup khi mở web)
+## Thông báo (popup + chuông)
 
-- Ảnh hiển thị: `images/new-screen.png`. PNG nền trong suốt thì popup cũng trong suốt (không có khung trắng).
-- **Đổi ảnh:** upload ảnh mới, đặt đúng tên `new-screen.png` (ghi đè file cũ).
-- **Tắt thông báo:** xóa file `images/new-screen.png` — web tự bỏ qua, không báo lỗi.
-- Popup hiện 1 lần mỗi lần mở app (sau khi đăng nhập). Đóng bằng nút X, bấm ra ngoài, bấm vào ảnh hoặc phím Esc.
-- Muốn xem thử ngay: thêm `?announce` vào cuối link (ví dụ `https://.../?announce`).
+- Ảnh đặt trong `images/` theo thứ tự: `new-screen.png` → `new-screen-1.png` → `new-screen-2.png` → …
+- **Đẩy thông báo mới:** upload ảnh kế tiếp (đang có `new-screen.png` thì đặt tên `new-screen-1.png`). Số lớn nhất = ảnh mới nhất.
+- Chỉ hiện **sau khi đăng nhập**. Ảnh mới nhất tự bật popup **1 lần / thiết bị**; chuông 🔔 trên thanh trên cùng có chấm đỏ cho tới khi xem.
+- Bấm chuông để xem lại **tất cả** ảnh đã đẩy (mới nhất ở trên cùng, có nhãn "Mới").
+- **Tắt 1 thông báo:** xóa file ảnh đó. Xem thử popup ngay: thêm `?announce` vào cuối link.
+- Popup đóng bằng nút X, bấm ra ngoài, bấm vào ảnh hoặc phím Esc.
 
 ## PDF: dấu trang & đi đến trang
 

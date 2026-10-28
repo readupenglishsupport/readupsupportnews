@@ -3,14 +3,19 @@
 /* PDF_BUCKET (tên kho) và PDF_MAX (giới hạn upload 50MB) khai báo trong pdf-reader.js */
 let toolsOn=false;
 
+const COMPRESS_URL='https://www.ilovepdf.com/vi/giam-dung-l%C6%B0%E1%BB%A3ng-pdf';   /* trang nén PDF (iLovePDF) */
 const TOOLS=[
-  { id:'pdf', icon:'bi-file-earmark-pdf', name:'pdfName', desc:'pdfDesc', note:'pdfMax', action:'pdfUp', run:()=>$('#pdfIn').click() }
+  { id:'pdf', icon:'bi-file-earmark-pdf', name:'pdfName', desc:'pdfDesc', note:'pdfMax', action:'pdfUp', btnIcon:'bi-upload', run:()=>$('#pdfIn').click() },
+  /* Thẻ hướng dẫn nén PDF > 50MB: có href → hiện nút mở link ở tab mới (không cần run) */
+  { id:'zip', icon:'bi-file-earmark-zip', name:'zipName', desc:'zipDesc', note:'zipNote', action:'zipGo', btnIcon:'bi-box-arrow-up-right', href:COMPRESS_URL }
 ];
 
 /* ---------- Trang Tiện ích ---------- */
-function showTools(){
+/* keep===true: vẽ lại trang Tiện ích tại chỗ (đổi ngôn ngữ) — không cuộn lên đầu, không đóng menu */
+function showTools(keep){
+  keep=keep===true;
   if(typeof closePdf==='function') closePdf();
-  cur=null; toolsOn=true; hideAll(); closeSide();
+  cur=null; toolsOn=true; hideAll(); if(!keep) closeSide();
   try{ history.replaceState(null,'',location.pathname+location.search); localStorage.removeItem('last'); }catch(e){}
   document.title=t('toolsTitle')+' · Readup Support News';
   $('#readerBox').innerHTML=`<div class="reader-card enter">
@@ -18,8 +23,9 @@ function showTools(){
     <div class="row g-3">${TOOLS.map(x=>`<div class="col-md-6"><div class="tool-card h-100">
       <div class="tool-ico"><i class="bi ${x.icon}"></i></div>
       <div class="fw-bold">${t(x.name)}</div>
-      <div class="small text-muted mb-2">${t(x.desc)}</div>
-      <button class="btn btn-primary btn-sm" data-tool="${x.id}"><i class="bi bi-upload me-1"></i>${t(x.action)}</button>
+      <div class="small text-muted mb-2 tool-desc">${t(x.desc)}</div>
+      ${x.href?`<a class="btn btn-primary btn-sm" href="${x.href}" target="_blank" rel="noopener noreferrer"><i class="bi ${x.btnIcon} me-1"></i>${t(x.action)}</a>`
+        :`<button class="btn btn-primary btn-sm" data-tool="${x.id}"><i class="bi ${x.btnIcon} me-1"></i>${t(x.action)}</button>`}
       <span class="small text-muted ms-2">${t(x.note)}</span>
     </div></div>`).join('')}</div>
     <input type="file" id="pdfIn" accept="application/pdf,.pdf" hidden>
@@ -28,7 +34,7 @@ function showTools(){
   $('#readerBox').querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>TOOLS.find(x=>x.id===b.dataset.tool).run());
   $('#pdfIn').onchange=e=>{ const f=e.target.files[0]; e.target.value=''; uploadPdf(f); };
   $('#pdfList').onclick=onPdfListClick;
-  renderPdfList(); renderSide(); window.scrollTo({top:0});
+  renderPdfList(); renderSide(); if(!keep) window.scrollTo({top:0});
 }
 function renderPdfList(){
   const box=$('#pdfList'); if(!box) return;
@@ -84,4 +90,15 @@ $('#navTools').onclick=showTools;
   document.addEventListener('click',e=>{ if(e.target.closest('#navAll,#navFav,#folderList [data-f]')&&!e.target.closest('[data-del]')){ toolsOn=false; renderSide(); } },true);
   /* mở bài báo thường từ danh sách → rời trang Tiện ích */
   const _oa=openArticle; openArticle=function(a){ if(!isPdfRow(a)){ toolsOn=false; if(isPdfRow(cur)) closePdf(); } return _oa.apply(this,arguments); };
+})();
+
+/* ---------- Đổi ngôn ngữ khi đang ở trang Tiện ích → ở lại trang này (không văng về Trang chủ) ---------- */
+(()=>{
+  const _al=applyLang;
+  applyLang=function(){
+    if(!(toolsOn&&user&&!cur)) return _al.apply(this,arguments);
+    const se=showEmpty; showEmpty=function(){};        /* chặn nhánh "về Trang chủ" của applyLang */
+    try{ _al.apply(this,arguments); }finally{ showEmpty=se; }
+    showTools(true);
+  };
 })();
