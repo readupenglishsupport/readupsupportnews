@@ -13,6 +13,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="css/style.css" rel="stylesheet">
+<link href="css/pdf.css" rel="stylesheet">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -56,7 +57,7 @@
   </div></header>
   <div class="container-fluid px-3 px-lg-4 py-3"><div class="row g-3">
     <aside class="col-lg-3"><div class="offcanvas-lg offcanvas-start" tabindex="-1" id="sideCanvas"><div class="offcanvas-header border-bottom"><span class="brand"><i class="bi bi-folder2-open me-2"></i><span data-i18n="manage"></span></span><button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#sideCanvas"></button></div><div class="offcanvas-body"><div class="side">
-      <div class="nav-item-x" id="navHome"><i class="bi bi-house-door"></i><span data-i18n="home"></span></div><div class="nav-item-x on" id="navAll"><i class="bi bi-calendar3"></i><span data-i18n="all"></span></div><div class="nav-item-x" id="navFav"><i class="bi bi-star-fill text-warning"></i><span data-i18n="fav"></span></div>
+      <div class="nav-item-x" id="navHome"><i class="bi bi-house-door"></i><span data-i18n="home"></span></div><div class="nav-item-x on" id="navAll"><i class="bi bi-calendar3"></i><span data-i18n="all"></span></div><div class="nav-item-x" id="navFav"><i class="bi bi-star-fill text-warning"></i><span data-i18n="fav"></span></div><div class="nav-item-x" id="navTools"><i class="bi bi-grid-3x3-gap"></i><span data-i18n="tools"></span></div>
       <div class="d-flex align-items-center mt-3 mb-1"><span class="small fw-bold text-muted ms-1" data-i18n="folders"></span><button class="btn btn-sm btn-outline-primary ms-auto py-0" id="addFolder"><i class="bi bi-folder-plus"></i></button></div>
       <div id="folderList"></div>
       <div class="small fw-bold text-muted mt-3 ms-1" data-i18n="arts"></div>
@@ -124,5 +125,7 @@
 <script src="js/feed-home.js"></script>
 <script src="js/article-fetch.js"></script>
 <script src="js/sidebar-active.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/pdf-reader.js"></script>
 </body>
 </html>

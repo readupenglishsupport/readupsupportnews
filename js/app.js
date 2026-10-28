@@ -2,7 +2,8 @@ const sb = supabase.createClient('https://vjvvyadldyvqtjjsscfm.supabase.co','sb_
 const $ = s => document.querySelector(s);
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['yellow','green','blue','pink','orange','purple'];
-let user, articles=[], folders=[], cur=null, view='all', mode='login', editId=null, menuMark=null, savedRange=null, lang='vi';
+const isPdfRow=a=>!!a&&typeof a.url==='string'&&a.url.startsWith('pdf:');   /* file PDF lưu trong bảng articles với url dạng pdf:<đường dẫn> */
+let user, articles=[], pdfs=[], folders=[], cur=null, view='all', mode='login', editId=null, menuMark=null, savedRange=null, lang='vi';
 try{ lang=localStorage.getItem('lang')||(navigator.language||'').startsWith('vi')?'vi':'en'; if(localStorage.getItem('lang')) lang=localStorage.getItem('lang'); }catch(e){}
 
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
@@ -87,7 +88,7 @@ addEventListener('hashchange',()=>{ const id=(location.hash.match(/#(?:id|a)=([\
 (async()=>{ const {data}=await sb.auth.getSession(); setTimeout(()=>boot(data.session),500); })();
 async function loadData(){
   const [f,a]=await Promise.all([sb.from('folders').select('*').order('created_at'), sb.from('articles').select('id,title,url,folder_id,created_at,favorite').order('created_at',{ascending:false})]);
-  folders=f.data||[]; let L=a; if(a.error) L=await sb.from('articles').select('id,title,url,folder_id,created_at').order('created_at',{ascending:false}); articles=L.data||[]; renderSide();
+  folders=f.data||[]; let L=a; if(a.error) L=await sb.from('articles').select('id,title,url,folder_id,created_at').order('created_at',{ascending:false}); articles=L.data||[]; pdfs=articles.filter(isPdfRow); articles=articles.filter(x=>!isPdfRow(x)); renderSide();
 }
 
 /* ---------- Sidebar ---------- */
@@ -372,6 +373,7 @@ function infoCard(a,keep){
   </tbody></table></div><button class="btn btn-sm btn-primary" id="saveInfo"><i class="bi bi-check2 me-1"></i>${t('saveInfo')}</button></div>`;
 }
 function openArticle(a,keep,restore){
+  if(isPdfRow(a)) return openPdf(a,keep,restore);
   cur=a; cur.notes=cur.notes||{}; renderSide(); lastOpen=Date.now();
   if(!keep){ hideAll(); try{ history.replaceState(null,'','#id='+a.id); localStorage.setItem('last',a.id); }catch(e){} }
   document.title=a.title+' · Readup Support News';
