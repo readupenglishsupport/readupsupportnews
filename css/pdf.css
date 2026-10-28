@@ -65,3 +65,43 @@ body.pdf-adding .textLayer{pointer-events:none}
 .pdf-tip{position:fixed;right:70px;bottom:70px;z-index:1900;background:rgba(33,37,41,.92);color:#fff;padding:7px 14px;border-radius:999px;font-size:.85rem;font-weight:600;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease;white-space:nowrap}
 .pdf-tip.on{opacity:1;transform:none}
 @media(max-width:575.98px){.pdf-dock{right:10px;bottom:58px}.pdf-tip{right:62px;bottom:66px}}
+
+/* ===== Ô tròn "trang hiện tại / tổng" + ô Đi đến trang (góc dưới phải) ===== */
+.pdf-nav{position:fixed;right:14px;bottom:14px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.pdf-nav .pdf-badge{position:static}   /* ghi đè position:fixed cũ: nằm trong cụm .pdf-nav */
+.pdf-jump{display:flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:999px;box-shadow:0 4px 16px rgba(0,0,0,.22);padding:2px 2px 2px 12px}
+.pdf-jump input{width:4.4em;border:0;background:transparent;color:inherit;font:600 .85rem/1.6 inherit;font-family:inherit;outline:0;text-align:right;padding:0 4px}
+.pdf-jump input::placeholder{opacity:.5;font-weight:500}
+.pdf-jump button{width:30px;height:30px;border:0;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;line-height:1;padding:0}
+.pdf-jump button:active{transform:scale(.92)}
+/* cụm nút nổi (+, −, Thêm chữ) và thông báo nhỏ dời lên cho khỏi đè ô Đi đến trang */
+.pdf-dock{bottom:104px}
+.pdf-tip{bottom:112px}
+@media(max-width:575.98px){.pdf-nav{right:10px;bottom:10px}.pdf-dock{right:10px;bottom:100px}.pdf-tip{bottom:108px}}
+
+/* ===== Dấu trang: nút tròn góc trái trên cùng của PDF ===== */
+.pdf-bm-anchor{position:sticky;top:64px;height:0;z-index:950}
+.pdf-bm-btn{position:absolute;left:4px;top:4px;width:42px;height:42px;border-radius:50%;border:2px solid var(--brand);background:var(--card);color:var(--brand-t);display:flex;align-items:center;justify-content:center;font-size:1.15rem;padding:0;box-shadow:0 4px 16px rgba(0,0,0,.28);transition:transform .15s ease,background-color .15s ease}
+.pdf-bm-btn:active{transform:scale(.92)}
+.pdf-bm-btn[aria-expanded=true]{background:var(--brand);color:#fff}
+.pdf-bm-cnt{position:absolute;right:-5px;top:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--brand);color:#fff;font:700 .68rem/1 system-ui,sans-serif;display:none;align-items:center;justify-content:center;border:2px solid var(--card);box-sizing:content-box}
+.pdf-bm-btn[aria-expanded=true] .pdf-bm-cnt{background:#fff;color:var(--brand)}
+.pdf-bm-panel{position:absolute;left:4px;top:52px;width:min(330px,calc(100vw - 40px));max-height:min(70vh,520px);display:flex;flex-direction:column;background:var(--card);color:var(--bs-body-color);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.32);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px) scale(.97);transform-origin:0 0;transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1),visibility 0s linear .2s}
+.pdf-bm-panel.on{opacity:1;visibility:visible;pointer-events:auto;transform:none;transition:opacity .16s ease,transform .2s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.pdf-bm-head{padding:10px 14px;font-weight:700;font-size:.9rem;border-bottom:1px solid var(--line);display:flex;align-items:center;color:var(--brand-t)}
+.pdf-bm-list{overflow:auto;padding:6px;min-height:0;-webkit-overflow-scrolling:touch}
+.pdf-bm-none{padding:12px;font-size:.82rem;color:var(--bs-secondary-color)}
+.pdf-bm-item{display:flex;align-items:center;gap:2px;border-radius:10px}
+.pdf-bm-item:hover{background:var(--hover)}
+.pdf-bm-item.here{background:var(--brand-l)}
+.pdf-bm-go{flex:1;min-width:0;display:flex;align-items:center;gap:8px;border:0;background:none;color:inherit;text-align:left;padding:8px 8px;font-size:.88rem;font-weight:600;border-radius:10px}
+.pdf-bm-go i{color:var(--brand-t);flex:none}
+.pdf-bm-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pdf-bm-pg{flex:none;font-size:.72rem;font-weight:600;color:var(--bs-secondary-color)}
+.pdf-bm-ic{flex:none;border:0;background:none;color:inherit;opacity:.65;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.pdf-bm-ic:hover{opacity:1;background:var(--hover)}
+.pdf-bm-edit{flex:1;min-width:0;margin:4px 0 4px 6px;padding:4px 8px;border:1px solid var(--brand);border-radius:8px;background:var(--card);color:inherit;outline:0;font-size:.88rem}
+.pdf-bm-add{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line)}
+.pdf-bm-add input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bs-body-bg);color:inherit;padding:5px 10px;font-size:.85rem;outline:0}
+.pdf-bm-add input:focus{border-color:var(--brand)}
+.pdf-bm-add .btn{white-space:nowrap}

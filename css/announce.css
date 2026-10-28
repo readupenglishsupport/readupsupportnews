@@ -1,0 +1,11 @@
+/* ===== Popup thông báo (ảnh images/new-screen.png) — nền trong suốt, ảnh PNG trong suốt hiển thị đúng ===== */
+#annOv{position:fixed;inset:0;z-index:3400;display:flex;align-items:center;justify-content:center;padding:24px 5vw;background:rgba(0,0,0,.58);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);opacity:0;transition:opacity .25s ease}
+#annOv.on{opacity:1}
+.ann-box{position:relative;display:inline-block;line-height:0;transform:translateY(18px) scale(.94);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+#annOv.on .ann-box{transform:none}
+.ann-img{display:block;width:auto;height:auto;max-width:min(90vw,460px);max-height:calc(100dvh - 120px);max-height:calc(100vh - 120px);background:none;border:0;cursor:pointer;
+  filter:drop-shadow(0 14px 32px rgba(0,0,0,.45))}   /* drop-shadow theo viền ảnh nên không tạo khung khi ảnh trong suốt */
+@supports(height:100dvh){.ann-img{max-height:calc(100dvh - 120px)}}
+.ann-x{position:absolute;top:-14px;right:-14px;width:36px;height:36px;border-radius:50%;border:0;background:#fff;color:#333;display:flex;align-items:center;justify-content:center;font-size:1.15rem;line-height:1;padding:0;box-shadow:0 3px 12px rgba(0,0,0,.4);transition:transform .15s ease}
+.ann-x:active{transform:scale(.9)}
+.ann-x:focus-visible{outline:3px solid #ffc107;outline-offset:2px}

@@ -8,7 +8,7 @@
 const PDF_BUCKET='pdfs', PDF_MAX=50*1024*1024;
 const PDFJS_CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
 const TX_COLORS=['#111111','#d11a1a','#1565c0','#2e7d32','#f57f17'];
-const P={id:null,doc:null,seq:0,zoom:1,ratio:1.4142,ratios:[],hl:[],tx:[],obs:null,addMode:false,saveT:0,jsP:null};
+const P={id:null,doc:null,bm:[],seq:0,zoom:1,ratio:1.4142,ratios:[],hl:[],tx:[],obs:null,addMode:false,saveT:0,jsP:null};
 const isPdfArt=isPdfRow;
 const isPdf=()=>isPdfArt(cur);
 function closePdf(){ pdfTeardown(); }   /* tools.js gọi khi rời khỏi file PDF */
@@ -33,7 +33,7 @@ async function openPdf(a,keep,restore){
   cur=a; cur.notes=cur.notes||{}; toolsOn=false; renderSide(); lastOpen=Date.now();
   if(!keep){ hideAll(); try{ history.replaceState(null,'','#id='+a.id); localStorage.setItem('last',a.id); }catch(e){} }
   document.title=a.title+' · Readup Support News';
-  const st=cur.notes.__pdf||{}; P.id=a.id; P.hl=(st.hl||[]).map(x=>({...x})); P.tx=(st.tx||[]).map(x=>({...x}));
+  const st=cur.notes.__pdf||{}; P.id=a.id; P.hl=(st.hl||[]).map(x=>({...x})); P.tx=(st.tx||[]).map(x=>({...x})); P.bm=(st.bm||[]).map(x=>({...x}));
   P.zoom=Math.min(3,Math.max(.5,+lsGet('pdfz')||1)); P.ratios=[]; P.addMode=false; document.body.classList.remove('pdf-adding');
   const my=++P.seq, b=(k,i,tt,x='')=>`<button class="btn btn-sm btn-outline-secondary ${x}" id="${k}" data-i18n-title="${tt}" title="${t(tt)}"><i class="bi ${i}"></i></button>`;
   $('#readerBox').innerHTML=`<div class="reader-card pdf-card${keep?'':' enter'}" id="pdfWrap">
@@ -45,9 +45,11 @@ async function openPdf(a,keep,restore){
       ${b('pdfDl','bi-download','pdfDl')}
     </div>
     <div class="small text-muted mb-2"><i class="bi bi-lightbulb text-warning me-1"></i><span data-i18n="pdfHint">${t('pdfHint')}</span></div>
+    <div class="pdf-bm-anchor" id="pdfBm"></div>
     <div id="reader" class="pdf-reader"><div class="text-center text-muted py-5"><span class="spinner-border spinner-border-sm me-2"></span>${t('pdfLoading')}</div></div>
-    <div id="pdfBadge" class="pdf-badge"><input id="pdfPg" inputmode="numeric" aria-label="${t('pdfPage')}"> / <span id="pdfTot">–</span></div></div>`;
-  pdfWire(); pdfZoomLabel(); pdfFabMake();
+    <div id="pdfNav" class="pdf-nav"><div id="pdfBadge" class="pdf-badge"><span id="pdfPg">1</span> / <span id="pdfTot">–</span></div>
+      <div class="pdf-jump"><input id="pdfJump" type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="go" autocomplete="off" aria-label="${t('pdfGoTo')}" placeholder="${t('pdfGoPh')}"><button id="pdfJumpBtn" type="button" title="${t('pdfGoTo')}" aria-label="${t('pdfGoTo')}"><i class="bi bi-arrow-right-short"></i></button></div></div></div>`;
+  pdfWire(); pdfZoomLabel(); pdfFabMake(); pdfBmMount();
   try{
     await loadPdfJs();
     const {data,error}=await sb.storage.from(PDF_BUCKET).createSignedUrl(a.url.slice(4),21600); if(error) throw error;
@@ -59,7 +61,7 @@ async function openPdf(a,keep,restore){
     if(restore&&pos) [0,300,900].forEach(ms=>setTimeout(()=>{ if(cur&&cur.id===a.id&&Math.abs(scrollY-pos)>8) window.scrollTo(0,pos); },ms)); else if(!keep) window.scrollTo({top:0});
   }catch(e){ if(my!==P.seq) return; console.warn(e); const r=$('#reader'); if(r) r.innerHTML=`<div class="alert alert-warning small mb-0">${esc(pdfErr(e))}</div>`; }
 }
-function pdfLabels(){ document.querySelectorAll('#pdfWrap [data-i18n-title]').forEach(n=>n.title=t(n.dataset.i18nTitle)); document.querySelectorAll('#pdfWrap [data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n)); }
+function pdfLabels(){ if(window.pdfBmRender) pdfBmRender(); document.querySelectorAll('#pdfWrap [data-i18n-title]').forEach(n=>n.title=t(n.dataset.i18nTitle)); document.querySelectorAll('#pdfWrap [data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n)); }
 function pdfTeardown(){
   if(P.saveT){ clearTimeout(P.saveT); P.saveT=0; if(isPdf()) pdfSave(); }
   P.seq++; if(P.obs){ P.obs.disconnect(); P.obs=null; } if(P.doc){ try{ P.doc.destroy(); }catch(e){} P.doc=null; }
@@ -117,14 +119,12 @@ function pdfRelayout(){
   const w=pdfPageW(); document.querySelectorAll('#pdfPages .pdf-page').forEach(el=>{ unrenderPage(el); el.style.width=w+'px'; el.style.height=(w*(P.ratios[+el.dataset.n]||P.ratio))+'px'; if(P.obs){ P.obs.unobserve(el); P.obs.observe(el); } });
 }
 function pdfCurPage(){ let best=1; const mid=innerHeight*.4; for(const p of document.querySelectorAll('#pdfPages .pdf-page')){ const r=p.getBoundingClientRect(); if(r.top<=mid) best=+p.dataset.n; if(r.top>mid) break; } return best; }
-let pgT=0; addEventListener('scroll',()=>{ if(!P.doc) return; cancelAnimationFrame(pgT); pgT=requestAnimationFrame(()=>{ const i=$('#pdfPg'); if(i&&document.activeElement!==i) i.value=pdfCurPage(); }); },{passive:true});
+let pgT=0; addEventListener('scroll',()=>{ if(!P.doc) return; cancelAnimationFrame(pgT); pgT=requestAnimationFrame(()=>{ const i=$('#pdfPg'); if(i) i.textContent=pdfCurPage(); }); },{passive:true});
 let rzT=0; addEventListener('resize',()=>{ if(!P.doc) return; clearTimeout(rzT); rzT=setTimeout(()=>{ const w=pdfPageW(), p=document.querySelector('#pdfPages .pdf-page'); if(p&&Math.abs(parseFloat(p.style.width)-w)>20) pdfRelayout(); },250); });
 function pdfWire(){
   $('#pdfBack').onclick=showTools;
   $('#pdfZo').onclick=()=>pdfSetZoom(P.zoom-.15); $('#pdfZi').onclick=()=>pdfSetZoom(P.zoom+.15);
   $('#pdfFit').onclick=()=>pdfSetZoom(1); $('#pdfZv').onclick=()=>pdfSetZoom(1);
-  $('#pdfPg').onchange=e=>{ const n=Math.min(P.doc?P.doc.numPages:1,Math.max(1,parseInt(e.target.value)||1)), el=pageEl(n); if(el) window.scrollTo({top:el.getBoundingClientRect().top+scrollY-70}); e.target.blur(); };
-  $('#pdfPg').onfocus=e=>e.target.select();
   $('#pdfAdd').onclick=()=>pdfAddMode(!P.addMode);
   $('#pdfDl').onclick=async()=>{ const {data,error}=await sb.storage.from(PDF_BUCKET).createSignedUrl(cur.url.slice(4),120,{download:(cur.title||'file')+'.pdf'}); if(error) return alert(pdfErr(error)); const a=document.createElement('a'); a.href=data.signedUrl; a.rel='noopener'; document.body.appendChild(a); a.click(); a.remove(); };
 }
@@ -264,7 +264,7 @@ function pdfSerialize(){
   P.hl.forEach(h=>{ const m=document.querySelector(`#reader mark.pdf-hl[data-id="${h.id}"]`); if(m) h.c=m.dataset.c; });
   const keep=new Set(P.hl.map(h=>h.id)); Object.keys(cur.notes).forEach(k=>{ if(k!=='__pdf'&&!keep.has(k)) delete cur.notes[k]; });
   const f=v=>+v.toFixed(5);
-  cur.notes.__pdf={hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t}))};
+  cur.notes.__pdf={bm:P.bm.map(b=>({id:b.id,p:b.p,n:b.n||''})),hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t}))};
 }
 async function pdfSave(){ if(!cur) return; pdfSerialize(); const {error}=await sb.from('articles').update({notes:cur.notes}).eq('id',cur.id); if(error) alert(t('saveFail')+error.message); }
 function pdfSaveSoon(){ clearTimeout(P.saveT); P.saveT=setTimeout(()=>{ P.saveT=0; if(isPdf()) pdfSave(); },700); }
