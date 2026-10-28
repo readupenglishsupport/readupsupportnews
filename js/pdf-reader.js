@@ -108,7 +108,7 @@ function pdfOverlays(n,el){
 /* ---------- Thanh công cụ: zoom, trang ---------- */
 function pdfZoomLabel(){ const v=$('#pdfZv'); if(v) v.textContent=Math.round(P.zoom*100)+'%'; }
 function pdfSetZoom(z){
-  z=Math.round(Math.min(3,Math.max(.5,z))*100)/100; if(z===P.zoom||!P.doc) return; hideAll();
+  z=Math.round(Math.min(3,Math.max(.5,z))*100)/100; if(!P.doc) return; if(z===P.zoom){ pdfTip(t('pdfZoom')+' '+Math.round(z*100)+'%'); return; } hideAll(); pdfTip(t('pdfZoom')+' '+Math.round(z*100)+'%');
   const pages=[...document.querySelectorAll('#pdfPages .pdf-page')], a=pages.find(p=>p.getBoundingClientRect().bottom>80), rc=a&&a.getBoundingClientRect(), fr=a?(80-rc.top)/rc.height:0;
   P.zoom=z; try{ localStorage.setItem('pdfz',z); }catch(e){} pdfZoomLabel(); pdfRelayout(); 
   if(a){ const r2=a.getBoundingClientRect(); window.scrollBy(0,r2.top+fr*r2.height-80); }
@@ -137,11 +137,19 @@ function pdfAddMode(on){
 /* Khi thanh công cụ trượt khỏi màn hình → hiện nút tròn "Thêm chữ" nổi ở góc */
 function pdfFabMake(){
   pdfFabKill();
-  const f=document.createElement('button'); f.id='pdfFab'; f.className='pdf-fab'; f.title=t('pdfAddText'); f.setAttribute('aria-label',t('pdfAddText'));
-  f.innerHTML='<i class="bi bi-fonts"></i>'; f.onclick=()=>pdfAddMode(!P.addMode); document.body.appendChild(f);
-  const src=$('#pdfAdd'); if(src&&window.IntersectionObserver){ P.fabObs=new IntersectionObserver(es=>f.classList.toggle('show',!es[0].isIntersecting),{rootMargin:'-64px 0px 0px 0px'}); P.fabObs.observe(src); }
+  const d=document.createElement('div'); d.id='pdfDock'; d.className='pdf-dock';
+  const btn=(id,ic,tt,fn)=>{ const b=document.createElement('button'); if(id) b.id=id; b.className='pdf-fab'; b.title=tt; b.setAttribute('aria-label',tt); b.innerHTML='<i class="bi '+ic+'"></i>'; b.onclick=fn; return b; };
+  d.append(btn('','bi-plus-lg',t('pdfZoomIn'),()=>pdfSetZoom(P.zoom+.15)), btn('','bi-dash-lg',t('pdfZoomOut'),()=>pdfSetZoom(P.zoom-.15)), btn('pdfFab','bi-fonts',t('pdfAddText'),()=>pdfAddMode(!P.addMode)));
+  document.body.appendChild(d); if(P.addMode) $('#pdfFab').classList.add('on');
+  const src=$('#pdfAdd'); if(src&&window.IntersectionObserver){ P.fabObs=new IntersectionObserver(es=>d.classList.toggle('show',!es[0].isIntersecting),{rootMargin:'-64px 0px 0px 0px'}); P.fabObs.observe(src); }
 }
-function pdfFabKill(){ if(P.fabObs){ P.fabObs.disconnect(); P.fabObs=null; } const f=$('#pdfFab'); if(f) f.remove(); }
+/* Thông báo nhỏ hiện thông số khi chỉnh (zoom, cỡ chữ) */
+let tipT2=0;
+function pdfTip(msg){
+  let e=$('#pdfTip'); if(!e){ e=document.createElement('div'); e.id='pdfTip'; e.className='pdf-tip'; document.body.appendChild(e); }
+  e.textContent=msg; e.classList.add('on'); clearTimeout(tipT2); tipT2=setTimeout(()=>e.classList.remove('on'),1100);
+}
+function pdfFabKill(){ if(P.fabObs){ P.fabObs.disconnect(); P.fabObs=null; } const d=$('#pdfDock'); if(d) d.remove(); const g=$('#pdfTip'); if(g) g.remove(); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&P.addMode) pdfAddMode(false); });
 
 /* ---------- Highlight (dùng lại bảng màu / tra từ / ghi chú của web) ---------- */
@@ -228,7 +236,7 @@ function txEl(x,page){
   bar.addEventListener('click',e=>{
     const b=e.target.closest('[data-k]'); if(!b) return; const o=find(); if(!o) return;
     if(b.dataset.k==='del') return txRemove(x.id);
-    if(b.dataset.k==='up'||b.dataset.k==='dn'){ o.s=Math.min(.12,Math.max(.006,o.s*(b.dataset.k==='up'?1.12:1/1.12))); body.style.fontSize=(o.s*(page.offsetWidth||pw))+'px'; }
+    if(b.dataset.k==='up'||b.dataset.k==='dn'){ o.s=Math.min(.12,Math.max(.006,o.s*(b.dataset.k==='up'?1.12:1/1.12))); body.style.fontSize=(o.s*(page.offsetWidth||pw))+'px'; pdfTip(t('pdfTextSize')+' '+Math.round(o.s*(page.offsetWidth||pw))+'px'); }
     if(b.dataset.k==='col'){ o.c=TX_COLORS[(TX_COLORS.indexOf(o.c)+1)%TX_COLORS.length]; body.style.color=o.c; b.querySelector('i').style.color=o.c; }
     pdfSaveSoon();
   });

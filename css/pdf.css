@@ -55,9 +55,13 @@ body.pdf-adding .textLayer{pointer-events:none}
   .pdf-badge{right:10px;bottom:10px}
 }
 
-/* --- Nút tròn nổi "Thêm chữ" (hiện khi cuộn khỏi thanh công cụ) --- */
-.pdf-fab{position:fixed;right:14px;bottom:62px;z-index:900;width:46px;height:46px;border-radius:50%;border:2px solid var(--brand);background:var(--card);color:var(--brand-t);display:none;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 16px rgba(0,0,0,.28);transition:transform .15s ease,background-color .15s ease}
-.pdf-fab.show{display:flex}
-.pdf-fab:active{transform:scale(.94)}
+/* --- Cụm nút tròn nổi: + / − / Thêm chữ (hiện khi cuộn khỏi thanh công cụ) --- */
+.pdf-dock{position:fixed;right:14px;bottom:62px;z-index:900;display:none;flex-direction:column;gap:8px}
+.pdf-dock.show{display:flex}
+.pdf-fab{width:44px;height:44px;border-radius:50%;border:2px solid var(--brand);background:var(--card);color:var(--brand-t);display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 16px rgba(0,0,0,.28);transition:transform .15s ease,background-color .15s ease}
+.pdf-fab:active{transform:scale(.92)}
 .pdf-fab.on{background:var(--brand);color:#fff}
-@media(max-width:575.98px){.pdf-fab{right:10px;bottom:58px}}
+/* Thông báo thông số (Zoom 120% …) */
+.pdf-tip{position:fixed;right:70px;bottom:70px;z-index:1900;background:rgba(33,37,41,.92);color:#fff;padding:7px 14px;border-radius:999px;font-size:.85rem;font-weight:600;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .18s ease,transform .18s ease;white-space:nowrap}
+.pdf-tip.on{opacity:1;transform:none}
+@media(max-width:575.98px){.pdf-dock{right:10px;bottom:58px}.pdf-tip{right:62px;bottom:66px}}
