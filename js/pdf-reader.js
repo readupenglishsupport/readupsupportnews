@@ -220,15 +220,30 @@ const _syncSel=syncSel;
 syncSel=function(){ const a=document.activeElement; if(a&&a.closest&&a.closest('.pdf-tx')) return; return _syncSel(); };
 
 /* ---------- Ô chữ thêm lên PDF ---------- */
+/* Chỉ giữ thẻ B / I / U / BR / DIV (định dạng từng đoạn chữ); mọi thứ khác bị bỏ, giữ lại chữ */
+function txClean(html){
+  const root=document.createElement('div'); root.innerHTML=String(html||'');
+  const OK={B:'b',STRONG:'b',I:'i',EM:'i',U:'u',BR:'br',DIV:'div'};
+  const walk=(n)=>{ let o=''; n.childNodes.forEach(c=>{
+    if(c.nodeType===3) o+=esc(c.nodeValue);
+    else if(c.nodeType===1){ const k=OK[c.tagName]; if(!k) o+=walk(c); else if(k==='br') o+='<br>'; else o+='<'+k+'>'+walk(c)+'</'+k+'>'; }
+  }); return o; };
+  return walk(root);
+}
 function txEl(x,page){
   const pw=page.offsetWidth||parseFloat(page.style.width)||800, box=pdfDiv('pdf-tx'+(x.y<.07?' top':'')); box.dataset.id=x.id;
   box.style.left=(x.x*100)+'%'; box.style.top=(x.y*100)+'%';
-  const body=pdfDiv('pdf-tx-t'); body.contentEditable='true'; body.spellcheck=false; body.style.fontSize=(x.s*pw)+'px'; body.style.color=x.c; body.textContent=x.t||''; body.dataset.ph=t('pdfNewText');
+  const body=pdfDiv('pdf-tx-t'); body.contentEditable='true'; body.spellcheck=false; body.style.fontSize=(x.s*pw)+'px'; body.style.color=x.c; if(x.h) body.innerHTML=txClean(x.h); else body.textContent=x.t||''; body.dataset.ph=t('pdfNewText');
+  const CMD={b:'bold',i:'italic',u:'underline'};
+  const fmt=()=>{ if(!body.contains(document.activeElement)&&document.activeElement!==body) return; bar.querySelectorAll('[data-k="b"],[data-k="i"],[data-k="u"]').forEach(n=>{ let on=false; try{ on=document.queryCommandState(CMD[n.dataset.k]); }catch(e){} n.classList.toggle('on',on); }); };
+  const sync=()=>{ const o=find(); if(o){ o.t=body.innerText.replace(/\n$/,''); o.h=txClean(body.innerHTML); pdfSaveSoon(); } };
   const bar=pdfDiv('pdf-tx-bar'); bar.contentEditable='false';
-  bar.innerHTML=`<button class="pdf-drag" title="${t('pdfMove')}"><i class="bi bi-arrows-move"></i></button><button data-k="dn" title="${t('pdfSmaller')}">A−</button><button data-k="up" title="${t('pdfBigger')}">A+</button><button data-k="col" title="${t('pdfColor')}"><i class="bi bi-circle-fill" style="color:${x.c}"></i></button><button data-k="del" title="${t('pdfDelTx')}"><i class="bi bi-trash"></i></button>`;
+  bar.innerHTML=`<button class="pdf-drag" title="${t('pdfMove')}"><i class="bi bi-arrows-move"></i></button><button data-k="dn" title="${t('pdfSmaller')}">A−</button><button data-k="up" title="${t('pdfBigger')}">A+</button><button data-k="b" class="tx-b" title="${t('pdfBold')}"><b>B</b></button><button data-k="i" class="tx-i" title="${t('pdfItalic')}"><i>I</i></button><button data-k="u" class="tx-u" title="${t('pdfUnder')}"><u>U</u></button><button data-k="col" title="${t('pdfColor')}"><i class="bi bi-circle-fill" style="color:${x.c}"></i></button><button data-k="del" title="${t('pdfDelTx')}"><i class="bi bi-trash"></i></button>`;
   box.append(bar,body);
   const find=()=>P.tx.find(z=>z.id===x.id);
-  body.addEventListener('input',()=>{ const o=find(); if(o){ o.t=body.innerText.replace(/\n$/,''); pdfSaveSoon(); } });
+  body.addEventListener('input',sync);
+  ['keyup','mouseup','focus'].forEach(ev=>body.addEventListener(ev,fmt));
+  document.addEventListener('selectionchange',fmt);
   body.addEventListener('paste',e=>{ e.preventDefault(); document.execCommand('insertText',false,(e.clipboardData||window.clipboardData).getData('text')); });
   body.addEventListener('blur',()=>{ const o=find(); if(o&&!(o.t||'').trim()){ txRemove(x.id); } else pdfSaveSoon(); });
   bar.addEventListener('mousedown',e=>{ if(!e.target.closest('.pdf-drag')) e.preventDefault(); });
@@ -236,6 +251,7 @@ function txEl(x,page){
     const b=e.target.closest('[data-k]'); if(!b) return; const o=find(); if(!o) return;
     if(b.dataset.k==='del') return txRemove(x.id);
     if(b.dataset.k==='up'||b.dataset.k==='dn'){ o.s=Math.min(.12,Math.max(.006,o.s*(b.dataset.k==='up'?1.12:1/1.12))); body.style.fontSize=(o.s*(page.offsetWidth||pw))+'px'; pdfTip(t('pdfTextSize')+' '+Math.round(o.s*(page.offsetWidth||pw))+'px'); }
+    if(CMD[b.dataset.k]){ body.focus(); document.execCommand(CMD[b.dataset.k]); sync(); fmt(); return; }   /* B/I/U áp cho phần chữ đang bôi đen */
     if(b.dataset.k==='col'){ o.c=TX_COLORS[(TX_COLORS.indexOf(o.c)+1)%TX_COLORS.length]; body.style.color=o.c; b.querySelector('i').style.color=o.c; }
     pdfSaveSoon();
   });
@@ -263,7 +279,7 @@ function pdfSerialize(){
   P.hl.forEach(h=>{ const m=document.querySelector(`#reader mark.pdf-hl[data-id="${h.id}"]`); if(m) h.c=m.dataset.c; });
   const keep=new Set(P.hl.map(h=>h.id)); Object.keys(cur.notes).forEach(k=>{ if(k!=='__pdf'&&!keep.has(k)) delete cur.notes[k]; });
   const f=v=>+v.toFixed(5);
-  cur.notes.__pdf={bm:P.bm.map(b=>({id:b.id,p:b.p,n:b.n||''})),hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t}))};
+  cur.notes.__pdf={bm:P.bm.map(b=>({id:b.id,p:b.p,n:b.n||''})),hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t,h:x.h||''}))};
 }
 async function pdfSave(){ if(!cur) return; pdfSerialize(); const {error}=await sb.from('articles').update({notes:cur.notes}).eq('id',cur.id); if(error) alert(t('saveFail')+error.message); }
 function pdfSaveSoon(){ clearTimeout(P.saveT); P.saveT=setTimeout(()=>{ P.saveT=0; if(isPdf()) pdfSave(); },700); }

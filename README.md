@@ -46,9 +46,9 @@ file PDF gốc không bị sửa.
 
 - Ảnh đặt trong `images/` theo thứ tự: `new-screen.png` → `new-screen-1.png` → `new-screen-2.png` → …
 - **Đẩy thông báo mới:** upload ảnh kế tiếp (đang có `new-screen.png` thì đặt tên `new-screen-1.png`). Số lớn nhất = ảnh mới nhất.
-- Chỉ hiện **sau khi đăng nhập**. Ảnh mới nhất tự bật popup **1 lần / thiết bị**; chuông 🔔 trên thanh trên cùng có chấm đỏ cho tới khi xem.
+- Chỉ hiện **sau khi đăng nhập**. Popup ảnh mới nhất bật **mỗi lần tải lại web / đăng nhập**; chuông 🔔 (cạnh nút sáng/tối) có chấm đỏ cho tới khi xem.
 - Bấm chuông để xem lại **tất cả** ảnh đã đẩy (mới nhất ở trên cùng, có nhãn "Mới").
-- **Tắt 1 thông báo:** xóa file ảnh đó. Xem thử popup ngay: thêm `?announce` vào cuối link.
+- **Tắt 1 thông báo:** xóa file ảnh đó. 
 - Popup đóng bằng nút X, bấm ra ngoài, bấm vào ảnh hoặc phím Esc.
 
 ## PDF: dấu trang & đi đến trang

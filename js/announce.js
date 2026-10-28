@@ -2,10 +2,10 @@
    Thông báo bằng ảnh (popup + biểu tượng chuông lưu lại tất cả ảnh)
    - Ảnh đặt trong thư mục images/ theo thứ tự:  new-screen.png (cũ nhất) → new-screen-1.png → new-screen-2.png → ...
    - Muốn ĐẨY thông báo mới: upload ảnh kế tiếp, ví dụ đã có new-screen.png thì đặt tên new-screen-1.png.
-     Ảnh có số lớn nhất = ảnh MỚI NHẤT (popup tự bật 1 lần cho ảnh này, chuông có chấm đỏ).
+     Ảnh có số lớn nhất = ảnh MỚI NHẤT (popup bật mỗi lần mở web / đăng nhập, chuông có chấm đỏ tới khi xem).
    - Chuông ở thanh trên cùng: lưu toàn bộ các ảnh thông báo, mới nhất ở trên cùng.
-   - Chỉ hiện SAU KHI ĐĂNG NHẬP. Mỗi ảnh mới chỉ tự bật popup 1 lần trên mỗi thiết bị (xem lại bằng chuông).
-   - Muốn TẮT 1 thông báo: xóa file ảnh đó. Thêm ?announce vào link để ép hiện popup ảnh mới nhất (để thử).
+   - Chỉ hiện SAU KHI ĐĂNG NHẬP. Popup ảnh mới nhất bật lại mỗi lần tải lại web hoặc đăng nhập.
+   - Muốn TẮT 1 thông báo: xóa file ảnh đó. 
    ===================================================================== */
 const ANN_DIR='images/', ANN_BASE='new-screen', ANN_EXT='.png', ANN_MAX=30;   /* dò tối đa new-screen-30.png */
 const annName=i=>ANN_DIR+ANN_BASE+(i?'-'+i:'')+ANN_EXT;
@@ -35,7 +35,6 @@ function annBadge(){ const b=document.getElementById('bellDot'); if(b) b.style.d
 /* ---------- Popup ảnh mới nhất ---------- */
 async function showAnnounce(force){
   if(annBusy||document.getElementById('annOv')||!annList.length) return;
-  if(!force&&!annUnseen()) return;
   annBusy=true;
   try{
     const top=annList[0];
@@ -81,7 +80,7 @@ document.addEventListener('click',e=>{ if(e.target.closest('#bellBtn')) annOpenB
     if(session&&session.user){
       try{ await annScan(); }catch(e){ annList=[]; }
       annBadge();
-      showAnnounce(/[?&]announce\b/.test(location.search));
+      showAnnounce();
     }
     return r;
   };

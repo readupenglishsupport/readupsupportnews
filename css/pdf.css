@@ -108,3 +108,5 @@ body.pdf-adding .textLayer{pointer-events:none}
 .pdf-bm-add input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--bs-body-bg);color:inherit;padding:5px 10px;font-size:.85rem;outline:0}
 .pdf-bm-add input:focus{border-color:var(--brand)}
 .pdf-bm-add .btn{white-space:nowrap}
+
+.pdf-tx-bar button.on{background:var(--brand-t,#cf1717);color:#fff}

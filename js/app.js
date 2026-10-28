@@ -7,8 +7,10 @@ let user, articles=[], pdfs=[], folders=[], cur=null, view='all', mode='login', 
 try{ lang=localStorage.getItem('lang')||(navigator.language||'').startsWith('vi')?'vi':'en'; if(localStorage.getItem('lang')) lang=localStorage.getItem('lang'); }catch(e){}
 
 const flag = l => l==='vi' ? '<svg viewBox="0 0 30 20" width="22" height="15"><use href="#f-vi"/></svg>' : '<svg viewBox="0 0 60 30" width="24" height="12"><use href="#f-en"/></svg>';
-const toolsHTML = () => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button>`;
-document.querySelectorAll('.tools-slot').forEach(s=>s.innerHTML=toolsHTML());
+const bellHTML = () => `<button class="btn btn-outline-secondary position-relative bell-btn" id="bellBtn" type="button" data-i18n-title="notifBell" aria-label="Notifications"><i class="bi bi-bell"></i><span id="bellDot" class="bell-dot" style="display:none"></span></button>`;
+/* Ngôn ngữ đứng riêng bên ngoài; chuông + nút sáng/tối nằm chung 1 nhóm (chuông chỉ có trong app, không có ở màn hình đăng nhập) */
+const toolsHTML = bell => `<div class="btn-group btn-group-sm">${['vi','en'].map(l=>`<button class="btn btn-outline-secondary lbtn" data-lang="${l}" title="${l=='vi'?'Tiếng Việt':'English'}">${flag(l)}</button>`).join('')}</div><div class="btn-group btn-group-sm">${bell?bellHTML():''}<button class="btn btn-sm btn-outline-secondary themeBtn"><i class="bi"></i></button></div>`;
+document.querySelectorAll('.tools-slot').forEach(s=>s.innerHTML=toolsHTML(!!s.closest('#appView')));
 function applyLang(){
   document.documentElement.lang=lang;
   document.querySelectorAll('[data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n));
