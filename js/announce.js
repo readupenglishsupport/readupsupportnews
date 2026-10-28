@@ -26,7 +26,7 @@ async function showAnnounce(force){
   if(seen&&!force) return;
   annBusy=true;
   try{
-    const src=await annLoad(); if(!src) return;
+    const src=await (window.__annP||annLoad()); window.__annP=null; if(!src) return;
     const img=new Image(); img.src=src;
     try{ await img.decode(); }catch(e){ if(!img.naturalWidth) return; }
     img.className='ann-img'; img.alt=''; img.draggable=false;
@@ -45,12 +45,5 @@ async function showAnnounce(force){
   }finally{ annBusy=false; }
 }
 
-/* Hiện sau khi đăng nhập / khởi động xong (bọc hàm boot của app.js) */
-(()=>{
-  const _boot=boot;
-  boot=async function(session){
-    const r=await _boot.apply(this,arguments);
-    if(session) setTimeout(()=>showAnnounce(/[?&]announce\b/.test(location.search)),350);
-    return r;
-  };
-})();
+/* Hiện NGAY khi ảnh sẵn sàng (không chờ đăng nhập / tải dữ liệu). Ảnh đã được tải song song từ <head> của index.html */
+showAnnounce(/[?&]announce\b/.test(location.search));
