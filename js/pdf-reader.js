@@ -47,8 +47,7 @@ async function openPdf(a,keep,restore){
     <div class="small text-muted mb-2"><i class="bi bi-lightbulb text-warning me-1"></i><span data-i18n="pdfHint">${t('pdfHint')}</span></div>
     <div class="pdf-bm-anchor" id="pdfBm"></div>
     <div id="reader" class="pdf-reader"><div class="text-center text-muted py-5"><span class="spinner-border spinner-border-sm me-2"></span>${t('pdfLoading')}</div></div>
-    <div id="pdfNav" class="pdf-nav"><div id="pdfBadge" class="pdf-badge"><span id="pdfPg">1</span> / <span id="pdfTot">–</span></div>
-      <div class="pdf-jump"><input id="pdfJump" type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="go" autocomplete="off" aria-label="${t('pdfGoTo')}" placeholder="${t('pdfGoPh')}"><button id="pdfJumpBtn" type="button" title="${t('pdfGoTo')}" aria-label="${t('pdfGoTo')}"><i class="bi bi-arrow-right-short"></i></button></div></div></div>`;
+    <div id="pdfNav" class="pdf-nav"><div id="pdfBadge" class="pdf-badge"><span id="pdfPg">1</span> / <span id="pdfTot">–</span></div></div></div>`;
   pdfWire(); pdfZoomLabel(); pdfFabMake(); pdfBmMount();
   try{
     await loadPdfJs();

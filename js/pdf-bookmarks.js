@@ -18,12 +18,22 @@ function pdfGoTo(n){
   [250,700].forEach(ms=>setTimeout(()=>{ if(P.doc) go(600); },ms));
   return n;
 }
-function pdfJumpGo(){
-  const i=$('#pdfJump'); if(!i) return; const v=parseInt(i.value,10);
+function pdfJumpGo(i){
+  if(!i) return; const v=parseInt(i.value,10);
   if(!P.doc||!v){ i.focus(); return; }
-  const n=pdfGoTo(v); i.value=''; i.blur(); bmClose(); if(n) pdfTip(t('pdfPage')+' '+n);
+  const n=pdfGoTo(v); document.querySelectorAll('.pdf-jump input').forEach(x=>x.value=''); i.blur(); bmClose(); if(n) pdfTip(t('pdfPage')+' '+n);
 }
-
+/* Ô "Đi đến trang": đặt trong cụm nút nổi (cùng + / − / Thêm chữ) và trên thanh công cụ */
+function pdfJumpEl(){
+  const d=document.createElement('div'); d.className='pdf-jump';
+  d.innerHTML=`<input type="text" inputmode="numeric" pattern="[0-9]*" enterkeyhint="go" autocomplete="off" aria-label="${esc(t('pdfGoTo'))}" placeholder="${esc(t('pdfGoPh'))}"><button type="button" title="${esc(t('pdfGoTo'))}" aria-label="${esc(t('pdfGoTo'))}"><i class="bi bi-arrow-right-short"></i></button>`;
+  const j=d.querySelector('input'), b=d.querySelector('button');
+  j.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); pdfJumpGo(j); } });
+  j.addEventListener('input',()=>{ j.value=j.value.replace(/\D/g,'').slice(0,5); });
+  j.addEventListener('focus',()=>bmClose());
+  b.onclick=()=>pdfJumpGo(j);
+  return d;
+}
 /* ---------- Dấu trang ---------- */
 function pdfBmMount(){
   const box=$('#pdfBm'); if(!box) return;
@@ -37,9 +47,10 @@ function pdfBmMount(){
   $('#pdfBmAdd').onclick=bmAdd;
   $('#pdfBmName').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); bmAdd(); } });
   $('#pdfBmList').onclick=bmListClick;
-  const j=$('#pdfJump'), jb=$('#pdfJumpBtn');
-  if(j){ j.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); pdfJumpGo(); } }); j.addEventListener('input',()=>{ j.value=j.value.replace(/\D/g,'').slice(0,5); }); j.addEventListener('focus',()=>bmClose()); }
-  if(jb) jb.onclick=pdfJumpGo;
+  document.querySelectorAll('.pdf-jump').forEach(x=>x.remove());
+  const tb=$('#pdfAdd'), dock=$('#pdfDock');
+  if(tb) tb.insertAdjacentElement('afterend',pdfJumpEl());
+  if(dock) dock.appendChild(pdfJumpEl());
   pdfBmRender();
 }
 function pdfBmRender(){
