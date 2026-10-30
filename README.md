@@ -12,6 +12,7 @@ css/
   pdf.css               # style cho Tiện ích + trình đọc PDF (gồm dấu trang, ô đi đến trang)
   announce.css          # style popup thông báo
 supabase/
+  functions/translate/index.ts   # Edge Function dịch bài bằng Claude (xem mục "Dịch bài chuẩn xác")
   pdf-setup.sql         # chạy 1 lần trong Supabase để bật kho lưu PDF
 images/
   placeholder-breaking-news.jpg  # ảnh nền cho tin không có ảnh (muốn đổi: thay file, giữ nguyên tên)
@@ -26,6 +27,9 @@ js/
   tools.js              # mục "Tiện ích" (sau Yêu thích): thẻ Đọc & ghi chú PDF, thẻ hướng dẫn nén PDF > 50MB (iLovePDF), upload / danh sách / xóa PDF
   pdf-reader.js         # trình đọc PDF: bôi đen tra từ, highlight, ghi chú, thêm chữ lên trang
   pdf-bookmarks.js      # PDF: dấu trang (nút tròn góc trái trên) + ô "Đi đến trang"
+  layout.js             # nút ẩn/hiện thanh bên trên màn hình lớn (nhớ lựa chọn)
+  glossary.js           # từ điển thuật ngữ Logistics/Supply chain Anh→Việt (sửa/thêm tại đây)
+  translate.js          # nút "Dịch bài" + popup bản dịch tiếng Việt
   announce.js           # popup thông báo + chuông (ảnh images/new-screen*.png)
 ```
 
@@ -42,6 +46,19 @@ file PDF gốc không bị sửa.
 > Thứ tự nạp script trong `index.html` quan trọng: `i18n.js` → `app.js` → các file còn lại
 > (các file sau ghi đè/mở rộng hàm của `app.js`).
 
+## Dịch bài chuẩn xác (nút "Dịch bài" trong bài báo)
+
+Bấm **Dịch bài** → popup hiện toàn bộ bài bằng tiếng Việt. 
+
+- **Miễn phí, không cần cấu hình gì (mặc định):** dịch máy kiểu Google Dịch + thay sẵn thuật ngữ trong `js/glossary.js`. Popup có nhãn "Dịch miễn phí".
+- **Tùy chọn (có phí, chuẩn hơn):** bật Edge Function dùng Claude (có tính phí theo API của Anthropic):
+  1. Cài Supabase CLI, trong thư mục dự án chạy: `supabase login` rồi `supabase link --project-ref vjvvyadldyvqtjjsscfm`
+  2. `supabase secrets set ANTHROPIC_API_KEY=sk-ant-...` (lấy key ở console.anthropic.com). Tùy chọn đổi model: `supabase secrets set ANTHROPIC_MODEL=...`
+  3. `supabase functions deploy translate`
+  4. Mở lại web → popup hiện nhãn xanh "Dịch chuẩn thuật ngữ (Claude)".
+  Chỉ người đã đăng nhập mới gọi được; kết quả được lưu tạm trên máy để mở lại không tốn thêm phí (bấm *Dịch lại* để dịch mới).
+- Thêm / sửa thuật ngữ: mở `js/glossary.js`, thêm dòng `['english term','bản dịch tiếng Việt']`.
+
 ## Thông báo (popup + chuông)
 
 - Ảnh đặt trong `images/` theo thứ tự: `new-screen.png` → `new-screen-1.png` → `new-screen-2.png` → …
@@ -56,6 +73,11 @@ file PDF gốc không bị sửa.
 - **Dấu trang:** nút tròn góc trái trên cùng của PDF → mở danh sách. Nhập tên (không bắt buộc) rồi bấm *Thêm* để đánh dấu trang đang xem;
   để trống thì tên mặc định là "Trang + số trang". Bấm vào dấu trang để nhảy tới, ✏️ đổi tên, 🗑 xóa. Lưu trong `notes.__pdf.bm`.
 - **Đi đến trang:** ô nhỏ nằm ngay dưới ô tròn "trang hiện tại / tổng số trang" (góc dưới phải): gõ số trang rồi bấm mũi tên (hoặc Enter).
+
+## Điều hướng & thanh bên
+
+- Mở bài / Tiện ích / Trang chủ đều tạo 1 mục lịch sử trình duyệt → bấm **Quay lại** (hoặc vuốt back trên điện thoại) sẽ về trang trước trong web, không thoát ra ngoài. Ở Trang chủ bấm Quay lại mới rời web.
+- Màn hình lớn: nút ▭ cạnh logo ẩn/hiện thanh bên (nhớ lựa chọn) để PDF rộng hơn. Điện thoại: nút ☰.
 
 ## Chạy thử
 

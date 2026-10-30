@@ -43,7 +43,7 @@
 
 <div id="appView" class="vfade" style="display:none">
   <header class="topbar"><div class="container-fluid px-3 px-lg-4 py-2 d-flex align-items-center">
-    <button class="btn btn-outline-secondary d-lg-none me-2 px-2 py-1" data-bs-toggle="offcanvas" data-bs-target="#sideCanvas" aria-label="Menu"><i class="bi bi-list fs-5"></i></button><a class="brand fs-5 text-nowrap" href="#" id="brandHome"><img src="logo.png" alt="" class="brand-logo me-2"><span class="d-none d-sm-inline">Readup Support News</span><span class="d-sm-none">Readup</span></a>
+    <button class="btn btn-outline-secondary d-none d-lg-inline-flex me-2 px-2 py-1" id="sideToggle" type="button" data-i18n-title="sideToggle" aria-label="Sidebar"><i class="bi bi-layout-sidebar-inset fs-5"></i></button><button class="btn btn-outline-secondary d-lg-none me-2 px-2 py-1" data-bs-toggle="offcanvas" data-bs-target="#sideCanvas" aria-label="Menu"><i class="bi bi-layout-sidebar-inset fs-5"></i></button><a class="brand fs-5 text-nowrap" href="#" id="brandHome"><img src="logo.png" alt="" class="brand-logo me-2"><span class="d-none d-sm-inline">Readup Support News</span><span class="d-sm-none">Readup</span></a>
     <div class="ms-auto d-flex align-items-center gap-2">
       <div class="tools-slot"></div>
       <div class="dropdown">
@@ -105,6 +105,12 @@
   <div class="modal-header"><h6 class="modal-title fw-bold"><i class="bi bi-bell me-2"></i><span data-i18n="notifTitle"></span></h6><button class="btn-close" data-bs-dismiss="modal"></button></div>
   <div class="modal-body" id="annList"></div>
 </div></div></div>
+<div class="modal fade" id="trModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"><div class="modal-content border-0">
+  <div class="modal-header flex-wrap gap-2"><h6 class="modal-title fw-bold me-auto text-break"><i class="bi bi-translate me-2"></i><span data-i18n="trTitle"></span><div class="small fw-normal text-muted text-truncate" id="trTitle" style="max-width:60vw"></div></h6><span id="trEng" class="badge" style="display:none"></span><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div class="progress mx-3 mt-2" id="trProg" style="height:4px;display:none"><div class="progress-bar bg-danger" style="width:0"></div></div>
+  <div class="modal-body"><div id="trBody" class="tr-body"></div></div>
+  <div class="modal-footer border-0"><button id="trRe" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-repeat me-1"></i><span data-i18n="trRe"></span></button><button id="trCopy" class="btn btn-sm btn-primary"><i class="bi bi-clipboard me-1"></i><span data-i18n="copy"></span></button></div>
+</div></div></div>
 <div id="artMenu" class="pop"></div>
 <div id="hlMenu" class="pop">
   <div id="hlNote" class="hm-note" style="display:none"></div><div class="hm-t" data-i18n="hlColor"></div><div id="hlColors"></div>
@@ -133,6 +139,9 @@
 <script src="js/tools.js"></script>
 <script src="js/pdf-reader.js"></script>
 <script src="js/pdf-bookmarks.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/glossary.js"></script>
+<script src="js/translate.js"></script>
 <script src="js/announce.js"></script>
 </body>
 </html>

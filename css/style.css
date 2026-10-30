@@ -114,3 +114,35 @@ button,.btn,.nav-item-x,.art{touch-action:manipulation}
 *::-webkit-scrollbar-button{display:none;width:0;height:0}   /* bỏ mũi tên ▲▼ */
 *::-webkit-scrollbar-corner{background:var(--brand-l)}
 @supports not selector(::-webkit-scrollbar){*{scrollbar-color:var(--brand) var(--brand-l);scrollbar-width:auto}}   /* Firefox */
+
+/* ===== Popup dịch bài ===== */
+.tr-body{line-height:1.8;font-size:var(--rf,1.05rem)}
+.tr-p{margin:0 0 1em}.tr-h{font-weight:700;font-size:1.1em;margin:1.3em 0 .5em;color:var(--brand-t)}.tr-li{margin:0 0 .5em;padding-left:.2em}
+.tr-wait{opacity:.4}
+
+/* ===== Ẩn / hiện thanh bên (màn hình lớn) ===== */
+@media(min-width:992px){
+  /* trượt mượt: thanh bên co về 0 + mờ dần, vùng nội dung giãn ra tương ứng */
+  aside.col-lg-3,main.col-lg-9{transition:width .4s cubic-bezier(.3,.8,.2,1),padding .4s cubic-bezier(.3,.8,.2,1),opacity .3s ease}
+  aside.col-lg-3>*{min-width:260px;transition:transform .4s cubic-bezier(.3,.8,.2,1)}
+  html.side-off aside.col-lg-3{width:0;padding-left:0;padding-right:0;opacity:0;overflow:hidden;pointer-events:none}
+  html.side-off aside.col-lg-3>*{transform:translateX(-24px)}
+  html.side-off main.col-lg-9{width:100%}
+}
+@media(prefers-reduced-motion:reduce){aside.col-lg-3,main.col-lg-9,aside.col-lg-3>*{transition:none!important}}
+
+/* ===== Hiệu ứng popup dịch ===== */
+#trModal.fade .modal-dialog{transform:translateY(34px) scale(.95);opacity:0;transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .3s ease}
+#trModal.show .modal-dialog{transform:none;opacity:1}
+#trModal .modal-content{overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.35)}
+#trModal .modal-header{background:linear-gradient(90deg,var(--brand-l),transparent)}
+.tr-x{animation:trIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*45ms)}
+@keyframes trIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.tr-sk .c{display:block;height:1em;border-radius:6px;background:linear-gradient(90deg,rgba(128,128,128,.14) 25%,rgba(128,128,128,.28) 50%,rgba(128,128,128,.14) 75%);background-size:200% 100%;animation:trShim 1.2s linear infinite}
+@keyframes trShim{from{background-position:200% 0}to{background-position:-200% 0}}
+.tr-fresh .c{animation:trFill .7s ease both}
+@keyframes trFill{from{opacity:0;background:var(--brand-l)}60%{background:var(--brand-l)}to{opacity:1;background:transparent}}
+#trProg .progress-bar{transition:width .45s ease}
+@media(prefers-reduced-motion:reduce){#trModal.fade .modal-dialog,.tr-x,.tr-sk .c,.tr-fresh .c{animation:none;transition:none}}
+
+.tr-t{font-weight:800;font-size:1.35em;line-height:1.35;margin:0 0 .9em;padding-bottom:.6em;border-bottom:2px solid var(--brand-l);color:var(--bs-body-color)}

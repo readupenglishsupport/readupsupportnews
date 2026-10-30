@@ -31,7 +31,7 @@ async function openPdf(a,keep,restore){
   if(keep&&P.id===a.id&&$('#pdfPages')){ pdfLabels(); return; }
   pdfTeardown();
   cur=a; cur.notes=cur.notes||{}; toolsOn=false; renderSide(); lastOpen=Date.now();
-  if(!keep){ hideAll(); try{ history.replaceState(null,'','#id='+a.id); localStorage.setItem('last',a.id); }catch(e){} }
+  if(!keep){ hideAll(); navSet('#id='+a.id); try{ localStorage.setItem('last',a.id); }catch(e){} }
   document.title=a.title+' · Readup Support News';
   const st=cur.notes.__pdf||{}; P.id=a.id; P.hl=(st.hl||[]).map(x=>({...x})); P.tx=(st.tx||[]).map(x=>({...x})); P.bm=(st.bm||[]).map(x=>({...x}));
   P.zoom=Math.min(3,Math.max(.5,+lsGet('pdfz')||1)); P.ratios=[]; P.addMode=false; document.body.classList.remove('pdf-adding');
@@ -239,7 +239,9 @@ function txEl(x,page){
   const sync=()=>{ const o=find(); if(o){ o.t=body.innerText.replace(/\n$/,''); o.h=txClean(body.innerHTML); pdfSaveSoon(); } };
   const bar=pdfDiv('pdf-tx-bar'); bar.contentEditable='false';
   bar.innerHTML=`<button class="pdf-drag" title="${t('pdfMove')}"><i class="bi bi-arrows-move"></i></button><button data-k="dn" title="${t('pdfSmaller')}">A−</button><button data-k="up" title="${t('pdfBigger')}">A+</button><button data-k="b" class="tx-b" title="${t('pdfBold')}"><b>B</b></button><button data-k="i" class="tx-i" title="${t('pdfItalic')}"><i>I</i></button><button data-k="u" class="tx-u" title="${t('pdfUnder')}"><u>U</u></button><button data-k="col" title="${t('pdfColor')}"><i class="bi bi-circle-fill" style="color:${x.c}"></i></button><button data-k="del" title="${t('pdfDelTx')}"><i class="bi bi-trash"></i></button>`;
-  box.append(bar,body);
+  const applyW=()=>{ const o=find()||x; if(o.w){ box.style.width=(o.w*100)+'%'; box.classList.add('fw'); } else { box.style.width=''; box.classList.remove('fw'); } };
+  const rs=pdfDiv('pdf-tx-rs'); rs.contentEditable='false'; rs.title=t('pdfWidth'); rs.innerHTML='<i></i>';
+  box.append(bar,body,rs);
   const find=()=>P.tx.find(z=>z.id===x.id);
   body.addEventListener('input',sync);
   ['keyup','mouseup','focus'].forEach(ev=>body.addEventListener(ev,fmt));
@@ -255,6 +257,16 @@ function txEl(x,page){
     if(b.dataset.k==='col'){ o.c=TX_COLORS[(TX_COLORS.indexOf(o.c)+1)%TX_COLORS.length]; body.style.color=o.c; b.querySelector('i').style.color=o.c; }
     pdfSaveSoon();
   });
+  applyW();
+  /* kéo cạnh phải của ô để đổi độ rộng (chữ tự xuống dòng); bấm đúp để trả về tự động */
+  rs.addEventListener('pointerdown',e=>{
+    const o=find(); if(!o) return; e.preventDefault(); rs.setPointerCapture(e.pointerId);
+    const pb=page.getBoundingClientRect(), sx=e.clientX, w0=box.getBoundingClientRect().width;
+    const mv=ev=>{ o.w=Math.min(1-o.x,Math.max(.05,(w0+ev.clientX-sx)/pb.width)); applyW(); };
+    const up=()=>{ rs.removeEventListener('pointermove',mv); rs.removeEventListener('pointerup',up); rs.removeEventListener('pointercancel',up); pdfSaveSoon(); };
+    rs.addEventListener('pointermove',mv); rs.addEventListener('pointerup',up); rs.addEventListener('pointercancel',up);
+  });
+  rs.addEventListener('dblclick',()=>{ const o=find(); if(o){ delete o.w; applyW(); pdfSaveSoon(); } });
   const drag=bar.querySelector('.pdf-drag');
   drag.addEventListener('pointerdown',e=>{
     const o=find(); if(!o) return; e.preventDefault(); drag.setPointerCapture(e.pointerId);
@@ -279,7 +291,7 @@ function pdfSerialize(){
   P.hl.forEach(h=>{ const m=document.querySelector(`#reader mark.pdf-hl[data-id="${h.id}"]`); if(m) h.c=m.dataset.c; });
   const keep=new Set(P.hl.map(h=>h.id)); Object.keys(cur.notes).forEach(k=>{ if(k!=='__pdf'&&!keep.has(k)) delete cur.notes[k]; });
   const f=v=>+v.toFixed(5);
-  cur.notes.__pdf={bm:P.bm.map(b=>({id:b.id,p:b.p,n:b.n||''})),hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t,h:x.h||''}))};
+  cur.notes.__pdf={bm:P.bm.map(b=>({id:b.id,p:b.p,n:b.n||''})),hl:P.hl.map(h=>({id:h.id,p:h.p,c:h.c,r:h.r.map(r=>r.map(f)),t:h.t||''})),tx:P.tx.filter(x=>(x.t||'').trim()).map(x=>({id:x.id,p:x.p,x:f(x.x),y:f(x.y),s:f(x.s),c:x.c,t:x.t,h:x.h||'',...(x.w?{w:f(x.w)}:{})}))};
 }
 async function pdfSave(){ if(!cur) return; pdfSerialize(); const {error}=await sb.from('articles').update({notes:cur.notes}).eq('id',cur.id); if(error) alert(t('saveFail')+error.message); }
 function pdfSaveSoon(){ clearTimeout(P.saveT); P.saveT=setTimeout(()=>{ P.saveT=0; if(isPdf()) pdfSave(); },700); }

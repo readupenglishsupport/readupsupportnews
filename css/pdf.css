@@ -110,3 +110,9 @@ body.pdf-adding .textLayer{pointer-events:none}
 .pdf-bm-add .btn{white-space:nowrap}
 
 .pdf-tx-bar button.on{background:var(--brand-t,#cf1717);color:#fff}
+
+/* kéo đổi độ rộng ô chữ */
+.pdf-tx.fw .pdf-tx-t{max-width:none;width:100%;box-sizing:border-box}
+.pdf-tx-rs{position:absolute;top:0;bottom:0;right:-7px;width:14px;cursor:ew-resize;touch-action:none;display:none;align-items:center;justify-content:center;z-index:2}
+.pdf-tx-rs i{display:block;width:4px;height:60%;min-height:14px;max-height:36px;border-radius:3px;background:var(--brand,#cf1717);box-shadow:0 0 0 2px #fff}
+.pdf-tx:hover .pdf-tx-rs,.pdf-tx:focus-within .pdf-tx-rs{display:flex}

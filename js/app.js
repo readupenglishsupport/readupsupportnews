@@ -2,6 +2,8 @@ const sb = supabase.createClient('https://vjvvyadldyvqtjjsscfm.supabase.co','sb_
 const $ = s => document.querySelector(s);
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['yellow','green','blue','pink','orange','purple'];
+/* Lịch sử trình duyệt: mở bài / Tiện ích / Trang chủ = 1 mục lịch sử → nút Quay lại (hoặc vuốt back) trở về Trang chủ của web thay vì thoát ra ngoài */
+function navSet(h){ try{ const url=location.pathname+location.search+h; if((location.hash||'')===h) history.replaceState(null,'',url); else history.pushState(null,'',url); }catch(e){} }
 const isPdfRow=a=>!!a&&typeof a.url==='string'&&a.url.startsWith('pdf:');   /* file PDF lưu trong bảng articles với url dạng pdf:<đường dẫn> */
 let user, articles=[], pdfs=[], folders=[], cur=null, view='all', mode='login', editId=null, menuMark=null, savedRange=null, lang='vi';
 try{ lang=localStorage.getItem('lang')||(navigator.language||'').startsWith('vi')?'vi':'en'; if(localStorage.getItem('lang')) lang=localStorage.getItem('lang'); }catch(e){}
@@ -42,7 +44,7 @@ const loc = () => lang==='vi'?'vi-VN':'en-GB';
 function showEmpty(keep){
   $('#readerBox').innerHTML=`<div class="reader-card vfade text-center text-muted py-5"><i class="bi bi-book fs-1 text-danger"></i><p class="mt-2 mb-0">${t('emptyMain')}</p></div><div id="homeFeed" class="mt-3"></div>`;
   document.title='Readup Support News';
-  if(!keep){ cur=null; try{ history.replaceState(null,'',location.pathname+location.search); localStorage.removeItem('last'); }catch(e){} if(user) renderHome(); }
+  if(!keep){ cur=null; navSet(''); try{ localStorage.removeItem('last'); }catch(e){} if(user) renderHome(); }
 }
 
 /* ---------- Đăng nhập / đăng ký ---------- */
@@ -77,7 +79,7 @@ async function boot(session){
   user=session.user; $('#uMail').textContent=user.email;
   $('#authView').style.display='none'; $('#appView').style.display='block';
   const want=(location.hash.match(/#(?:id|a)=([\w-]+)/)||[])[1];
-  showEmpty(true); await loadData(); if(want) await restoreArticle(want); if(!cur) renderHome(); loader(false);
+  showEmpty(true); await loadData(); if(want) await restoreArticle(want); else if(location.hash==='#tools'&&typeof showTools==='function') showTools(); if(!cur&&!toolsOn) renderHome(); loader(false);
 }
 applyTheme(); applyLang();
 async function restoreArticle(id){
@@ -86,7 +88,13 @@ async function restoreArticle(id){
   openArticle(data,false,true);
   try{ const k=JSON.parse(lsGet('lk')||'null'); if(k&&k.art===data.id&&Date.now()-k.ts<864e5) openLookup(k.text,k.mark?$(`#reader mark[data-id="${k.mark}"]`):null,k.tl); }catch(e){}
 }
-addEventListener('hashchange',()=>{ const id=(location.hash.match(/#(?:id|a)=([\w-]+)/)||[])[1]; if(id&&user&&(!cur||cur.id!==id)) restoreArticle(id); });
+/* Nút Quay lại / Tiến tới của trình duyệt */
+addEventListener('popstate',()=>{
+  if(!user) return; const h=location.hash||'', id=(h.match(/#(?:id|a)=([\w-]+)/)||[])[1];
+  if(id){ if(!cur||cur.id!==id) restoreArticle(id); }
+  else if(h==='#tools'&&typeof showTools==='function') showTools();
+  else { showEmpty(); renderSide(); window.scrollTo({top:0}); }
+});
 (async()=>{ const {data}=await sb.auth.getSession(); setTimeout(()=>boot(data.session),500); })();
 async function loadData(){
   const [f,a]=await Promise.all([sb.from('folders').select('*').order('created_at'), sb.from('articles').select('id,title,url,folder_id,created_at,favorite').order('created_at',{ascending:false})]);
@@ -377,7 +385,7 @@ function infoCard(a,keep){
 function openArticle(a,keep,restore){
   if(isPdfRow(a)) return openPdf(a,keep,restore);
   cur=a; cur.notes=cur.notes||{}; renderSide(); lastOpen=Date.now();
-  if(!keep){ hideAll(); try{ history.replaceState(null,'','#id='+a.id); localStorage.setItem('last',a.id); }catch(e){} }
+  if(!keep){ hideAll(); navSet('#id='+a.id); try{ localStorage.setItem('last',a.id); }catch(e){} }
   document.title=a.title+' · Readup Support News';
   $('#readerBox').innerHTML=`<div class="reader-card${keep?'':' enter'}"><div style="max-width:72ch;margin:auto">
     <h1 class="fw-bold mb-2" style="font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.3">${esc(a.title)}</h1>

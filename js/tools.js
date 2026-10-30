@@ -16,7 +16,7 @@ function showTools(keep){
   keep=keep===true;
   if(typeof closePdf==='function') closePdf();
   cur=null; toolsOn=true; hideAll(); if(!keep) closeSide();
-  try{ history.replaceState(null,'',location.pathname+location.search); localStorage.removeItem('last'); }catch(e){}
+  navSet('#tools'); try{ localStorage.removeItem('last'); }catch(e){}
   document.title=t('toolsTitle')+' · Readup Support News';
   $('#readerBox').innerHTML=`<div class="reader-card enter">
     <h5 class="fw-bold mb-3"><i class="bi bi-grid-3x3-gap me-2" style="color:var(--brand-t)"></i>${t('toolsTitle')}</h5>
